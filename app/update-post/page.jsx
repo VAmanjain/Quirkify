@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import From from "@components/Form";
+import Form from "@components/Form";
 
 const EditPost = () => {
   const router = useRouter();
@@ -57,7 +57,7 @@ const EditPost = () => {
   };
 
   return (
-    <From
+    <Form
       type="Edit"
       post={post}
       setPost={setPost}
