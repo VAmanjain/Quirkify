@@ -15,7 +15,6 @@ const Profile = ({ names, data, desc, handleEdit, handleDelete }) => {
           key={post._id}
           post={post}
           handleDelete={()=>handleDelete &&handleDelete(post)}
-          handleEdit={()=>handleEdit && handleEdit(post)}
         />
 
       ))}

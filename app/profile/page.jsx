@@ -23,9 +23,7 @@ const MyProfile = () => {
     fetchPosts();
   }, []);
 
-  const handleEdit = (post) => {
-    router.push(`/update-post?id=${post._id}`)
-  };
+
 
   const handleDelete = async (post) => {
     const hasConfirmed = confirm("Are you sure? you want to delete this post?")
@@ -48,7 +46,6 @@ const MyProfile = () => {
       names="Aman"
       desc="Welcome to your personlaized profile"
       data={posts}
-      handleEdit={handleEdit}
       handleDelete={handleDelete}
     />
   );
