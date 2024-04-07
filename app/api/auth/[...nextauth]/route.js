@@ -5,10 +5,16 @@ import User from '@models/user';
 import { connectToDB } from '@utils/database';
 
 const handler = NextAuth({
+  session:{
+    strategy:'jwt'
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECERTS,
+      httpOptions: {
+        timeout: 5000, // Increase timeout to 5 seconds
+      },
     })
   ],
 
