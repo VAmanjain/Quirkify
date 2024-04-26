@@ -32,7 +32,7 @@ const Feed = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const response = await fetch("/api/thought", { cache: 'no-store' });
+      const response = await fetch("/api/thought", { 'cache': 'no-store' });
       const data = await response.json();
       setPosts(data.reverse());// change this reverse to sort according to time *************************
       console.log(data); //.........remove
