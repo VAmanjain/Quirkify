@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import ThoughtCard from "./Card";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+// import { useRouter } from "next/navigation";
+// import { useSession } from "next-auth/react";
 
 const ThoughtCardList = ({ data, handleTagClick }) => {
 
 
 
   return (
-    <div className="mt-16 prompt_layout ">
+    <div className="mt-16 feed_layout ">
       {data.map((post) => (
         <ThoughtCard
           key={post._id}
@@ -25,15 +25,6 @@ const ThoughtCardList = ({ data, handleTagClick }) => {
 const Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
-  const router = useRouter();
-  const {data:session, status}= useSession();
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/explore"); // Redirect to feed page if user is already authenticated
-    }else {
-      router.replace("/"); // Redirect to home if user is signed out
-    }
-  }, [status]);
 
   const handleSearchChange = (e) => {
     setSearchText(e.target.value);
@@ -43,14 +34,17 @@ const Feed = () => {
     const fetchPosts = async () => {
       const response = await fetch("/api/thought");
       const data = await response.json();
-      setPosts(data);
+      setPosts(data.reverse());// change this reverse to sort according to time *************************
+      console.log(posts);
     };
 
     fetchPosts();
   }, []);
 
+  
+
   return (
-    <section className="feed">
+    <section className="feed max-w-[768px] ">
       <form className="relative w-full flex-center">
         <input
           type="text"

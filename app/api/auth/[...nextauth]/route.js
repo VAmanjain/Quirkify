@@ -40,6 +40,7 @@ const handler = NextAuth({
             username: profile.name.replace(" ", "").toLowerCase(),
             image: profile.picture,
           });
+          
         }
         return true
       } catch (error) {

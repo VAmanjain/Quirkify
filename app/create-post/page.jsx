@@ -38,6 +38,7 @@ const CreatePost = () => {
     }
 
   return (
+    <>
     <From
     type="Create"
     post={post}
@@ -45,6 +46,7 @@ const CreatePost = () => {
     submitting={submitting}
     handlesubmit={createPost}
     />
+    </>
   )
 }
 

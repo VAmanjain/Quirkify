@@ -13,6 +13,11 @@ const ThoughtSchema = new Schema({
   tag: {
     type: String,
   },
+  createAt: {
+    type: Date,
+    default: Date.now,
+    },
+
 });
 const Thought = models.Thought || model("Thought", ThoughtSchema);
 

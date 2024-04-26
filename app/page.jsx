@@ -1,5 +1,4 @@
 "use client";
-import Feed from "@components/Feed";
 
 import React, { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa6";
@@ -10,28 +9,78 @@ import { useRouter } from "next/navigation";
 const Home = () => {
   const [providers, setProviders] = useState(null);
   const router = useRouter();
-  const {data:session, status}= useSession();
+  const { data: session, status } = useSession();
+  const [userInfo, setUserInfo] = useState([]);
+
+
+  // useEffect(()=>{
+  //   if (status==="authenticated"){
+  //     router.replace('/explore');
+  //   }
+  //   else router.replace('/');
+  // },[status])
+
+
+  // useEffect(() => {
+  
+  //   const redirectToPage = async () => {
+  //     if (status === "authenticated") {
+  //       if (session && session.user) {
+  //         const sessionId = session.user.id;
+  //         try {
+  //           const response = await fetch(`/api/user-profile/${sessionId}/user`);
+  //           const data = await response.json();
+  //           console.log(data);
+  //           if (data && data.length > 0) {
+  //             router.replace("/explore"); // Redirect existing user to explore page
+  //           } else {
+  //             router.replace("/user-profile"); // Redirect new user to user-profile page
+  //           }
+  //         } catch (error) {
+  //           console.error("Error fetching user data:", error);
+  //         }
+  //       }
+  //     } else {
+  //       router.replace("/"); // Redirect user to home page if not authenticated
+  //     }
+  //   };
+
+  //   redirectToPage();
+  // }, [status, session, router]);
+
   useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/explore"); // Redirect to feed page if user is already authenticated
-    }else {
-      router.replace("/"); // Redirect to home if user is signed out
-    }
-  }, [status]);
+    const redirectToPage = async () => {
+      if (status === "authenticated" && session?.user) {
+        try {
+          const response = await fetch(`/api/user-profile/${session.user.id}/user`);
+          const { UserProfiles } = await response.json();
+          if (Array.isArray(UserProfiles) && UserProfiles.length === 0) {
+            router.replace("/user-profile"); // Redirect new user to user-profile page
+          } else {
+            router.replace("/explore"); // Redirect existing user to explore page
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          router.replace("/user-profile"); // Redirect in case of error
+        }
+      } else if (status === "unauthenticated") {
+        router.replace("/"); // Redirect user to home page if not authenticated
+      }
+    };
+
+    redirectToPage();
+  }, [status, session, router]);
+
+
   useEffect(() => {
     (async () => {
-      // if(providers){
-      //   router.push("/explore");
-      // }
-      // else{
       const res = await getProviders();
       setProviders(res);
-    // }
     })();
   }, []);
 
   return (
-    <section className="pt-24 bg-white">
+    <section className="pt-24 ">
       <div className="px-12 mx-auto max-w-7xl">
         <div className="w-full mx-auto text-left  md:w-11/12 xl:w-9/12 md:text-center">
           <h1 className="mb-8 text-5xl font-extrabold leading-none tracking-normal text-gray-900 md:text-6xl md:tracking-tight">
@@ -69,7 +118,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {/* <Feed/> */}
     </section>
   );
 };

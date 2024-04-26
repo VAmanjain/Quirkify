@@ -8,24 +8,60 @@ import Profile from "@components/Profile";
 
 
 const MyProfile = () => {
-  const { data: session } = useSession();
+
   const [posts, setPosts] =useState([]);
+  const [ userProfile, setUserprofile] = useState ([]);
   const router = useRouter();
-
+  const {data:session, status}= useSession();
   useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch(`/api/users/${session?.user.id}/posts`);
-      const data = await response.json();
-      setPosts(data);
-    };
+    if (status !== "authenticated") 
+      router.replace("/");  // Redirect to profile page if user is already authenticated
+    router.replace("/profile");
+  }, [status]);
 
-    if (session?.user.id) 
-    fetchPosts();
+  // Load session ID from localStorage on component mount
+  useEffect(() => {
+    if (session?.user?.id) {
+      const storedSessionId = localStorage.getItem("sessionId");
+      if (storedSessionId) {
+        fetchPosts(storedSessionId);
+        fetchUser(storedSessionId);
+      }
+    }
   }, []);
 
-  const handleEdit = (post) => {
-    router.push(`/update-post?id=${post._id}`)
+  // Fetch posts function
+  const fetchPosts = async (sessionId) => {
+    try {
+      const response = await fetch(`/api/users/${sessionId}/posts`);
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
+  const fetchUser = async (sessionId) => {
+    try {
+      const response = await fetch(`/api/user-profile/${sessionId}/user`);
+      const data = await response.json();
+      setUserprofile(data)
+     console.log(data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  // Call fetchPosts when session ID changes
+  useEffect(() => {
+    if (session?.user?.id) {
+      localStorage.setItem("sessionId", session.user.id); // Store session ID in localStorage
+      fetchPosts(session.user.id);
+      fetchUser(session.user.id);
+    }
+  }, [session]);
+
+
+
 
   const handleDelete = async (post) => {
     const hasConfirmed = confirm("Are you sure? you want to delete this post?")
@@ -45,10 +81,10 @@ const MyProfile = () => {
 
   return (
     <Profile
-      names="Aman"
+    userProfile={userProfile.UserProfiles && userProfile.UserProfiles.length > 0 ? userProfile.UserProfiles[0] : null}
       desc="Welcome to your personlaized profile"
       data={posts}
-      handleEdit={handleEdit}
+    
       handleDelete={handleDelete}
     />
   );

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Form = ({ type, post, setPost, handlesubmit, submitting }) => {
   return (
-    <section className="w-full max-w-full flex-start flex-col">
+    <section className=" max-w-[768px] flex-start flex-col ">
       <h1 className="head_text text-left">
         <span className="blue_gradient">{type} Post</span>
       </h1>
@@ -41,7 +41,7 @@ const Form = ({ type, post, setPost, handlesubmit, submitting }) => {
         </label>
 
         <div className="flex-end mx-3 mb-5 gap-4">
-          <Link href="/">
+          <Link href="/explore">
             Cancel
           </Link>
 
