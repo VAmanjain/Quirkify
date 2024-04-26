@@ -13,10 +13,12 @@ const MyProfile = () => {
   const [ userProfile, setUserprofile] = useState ([]);
   const router = useRouter();
   const {data:session, status}= useSession();
+  
+  
   useEffect(() => {
-    if (status !== "authenticated") 
-      router.replace("/");  // Redirect to profile page if user is already authenticated
-    router.replace("/profile");
+    if (status === "authenticated") {
+      router.replace("/profile");
+    } else router.replace("/");
   }, [status]);
 
   // Load session ID from localStorage on component mount

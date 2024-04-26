@@ -7,9 +7,30 @@ import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 const Nav = () => {
   const { data: session } = useSession();
-
+  const [ userProfile, setUserprofile] = useState ([]);
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+
+
+  const fetchUser = async (sessionId) => {
+    try {
+      const response = await fetch(`/api/user-profile/${sessionId}/user`);
+      const data = await response.json();
+      console.log(data);
+      setUserInfo(data);
+      console.log(userInfo);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  // Call fetchPosts when session ID changes
+  useEffect(() => {
+    if (session?.user?.id) {
+      localStorage.setItem("sessionId", session.user.id); // Store session ID in localStorage
+      fetchUser(session.user.id);
+    }
+  }, [session]);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +66,13 @@ const Nav = () => {
 
             <Link href='/profile'>
               <Image
-                src={session?.user.image}
+                   src={
+                    userProfile?.UserProfiles?.length > 0 && userProfile.UserProfiles[0].image.startsWith('/')
+                      ? userProfile.UserProfiles[0].image
+                      : userProfile?.UserProfiles?.length > 0
+                      ? `/${userProfile.UserProfiles[0].image}`
+                      : `${session?.user.image}`
+                  }
                 width={37}
                 height={37}
                 className='rounded-full'
@@ -77,7 +104,13 @@ const Nav = () => {
         {session?.user ? (
           <div className='flex'>
             <Image
-              src={session?.user.image}
+              src={
+                userProfile?.UserProfiles?.length > 0 && userProfile.UserProfiles[0].image.startsWith('/')
+                  ? userProfile.UserProfiles[0].image
+                  : userProfile?.UserProfiles?.length > 0
+                  ? `/${userProfile.UserProfiles[0].image}`
+                  : `${session?.user.image}`
+              }
               width={37}
               height={37}
               className='rounded-full'
