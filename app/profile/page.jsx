@@ -103,7 +103,6 @@ const MyProfile = () => {
     userProfile={userProfile.UserProfiles && userProfile.UserProfiles.length > 0 ? userProfile.UserProfiles[0] : null}
       desc="Welcome to your personlaized profile"
       data={posts}
-    
       handleDelete={handleDelete}
     />
   );
