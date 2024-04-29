@@ -70,7 +70,11 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const response = await fetch("/api/thought");
+      const response = await fetch("/api/thought",{
+        next:{
+          revalidate:1,
+        }
+      });
       const data = await response.json();
       setPosts(data.reverse());// change this reverse to sort according to time *************************
     };
