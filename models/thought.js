@@ -13,6 +13,10 @@ const ThoughtSchema = new Schema({
   tag: {
     type: String,
   },
+  star:[{
+    type:Schema.Types.ObjectId,
+    ref:'User'
+  }],
   createAt: {
     type: Date,
     default: Date.now,

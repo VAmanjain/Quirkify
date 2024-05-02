@@ -4,11 +4,14 @@ import { useState, useEffect } from "react";
 import ThoughtCard from "./Card";
 import { useDebounce } from "use-debounce";
 import FilterCard from "./FilterCard";
+import { unstable_noStore } from "next/cache";
 
 
 const ThoughtCardList = ({ data, handleTagClick }) => {
+  console.log(data);
   return (
     <div className="mt-16 feed_layout ">
+      
       {data.map((post) => (
         <ThoughtCard
           key={post._id}
@@ -44,7 +47,7 @@ const Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
 const [filterPorfile, setFilterProfile] = useState([]);
-
+unstable_noStore();
  const query = useDebounce(searchText, 2000)
 
 useEffect(() => {
@@ -68,22 +71,23 @@ useEffect(() => {
   }
 }, [searchText]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch("/api/thought",{
-        next:{
-          revalidate:1,
-        }
-      });
-      const data = await response.json();
-      setPosts(data.reverse());// change this reverse to sort according to time *************************
-    };
 
+useEffect(() => {
+  const fetchPosts = async () => {
+    const response = await fetch("/api/thought");
+    const data = await response.json();
+    const sortedPosts = data.sort((a, b) => new Date(b.time) - new Date(a.time));
+    setPosts(sortedPosts);
+    console.log(sortedPosts);
+  };
+
+  const interval = setInterval(() => {
     fetchPosts();
-  } ,1000, []);
+  }, 5000);
 
-  
+  return () => clearInterval(interval);
 
+}, []);
   return (
     <section className="feed max-w-[768px] ">
       <form className="relative w-full flex-center">
