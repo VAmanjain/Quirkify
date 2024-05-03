@@ -36,7 +36,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
         thoughtId: post._id,
       }),
     },
-    { next: { tags: ['collection'] }});
+   {cache:"no-store"});
   };
 
   const handleCopy = () => {
@@ -48,7 +48,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
   const fetchUser = async () => {
     try {
       const response = await fetch(
-        `/api/user-profile/${post.creator?._id}/user`,{ next: { revalidate: 3 } }
+        `/api/user-profile/${post.creator?._id}/user`,{ cache:"no-store"}
       );
       const data = await response.json();
       setUserProfile(data);

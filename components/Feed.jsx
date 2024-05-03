@@ -74,16 +74,16 @@ useEffect(() => {
 
 useEffect(() => {
   const fetchPosts = async () => {
-    const response = await fetch("/api/thought");
+    const response = await fetch("/api/thought",{cache:"no-store"});
     const data = await response.json();
-    const sortedPosts = data.sort((a, b) => new Date(b.time) - new Date(a.time));
+    const sortedPosts = data.sort((a, b) => new Date(b.createAt) - new Date(a.createAt));
     setPosts(sortedPosts);
     console.log(sortedPosts);
   };
 
   const interval = setInterval(() => {
     fetchPosts();
-  }, 5000);
+  }, 1000);
 
   return () => clearInterval(interval);
 
