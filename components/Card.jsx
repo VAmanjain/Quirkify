@@ -112,9 +112,9 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
       </p>
       
       {post?.star.some(starId => starId === session?.user?.id) ? (
-  <FaStar onClick={() => RemoveStar(session?.user?.id)} />
+  <FaStar onClick={() => RemoveStar(session?.user?.id)} className="cursor-pointer" />
 ) : (
-  <CiStar onClick={() => AddStar(session?.user?.id)} />
+  <CiStar onClick={() => AddStar(session?.user?.id)}  className="cursor-pointer" />
 )}
 
       {session?.user.id === post.creator?._id && pathName === "/profile" && (
