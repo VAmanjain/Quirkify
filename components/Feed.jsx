@@ -50,17 +50,51 @@ const [filterPorfile, setFilterProfile] = useState([]);
 unstable_noStore();
  const query = useDebounce(searchText, 2000)
 
+// useEffect(() => {
+//   const fetchQuery = async () => {
+//     try {
+//       const query = searchText;
+//       const response = await fetch(`/api/search?query=${query}`);
+//       if (!response.ok) {
+//         throw new Error(`HTTP error: ${response.status}`);
+//       }
+//       const data = await response.json();
+//       console.log(data);
+//     setFilterProfile(data)
+//     } catch (error) {
+//       console.error(`Fetch problem: ${error.message}`);
+//     }
+//   };
+
+//   if (searchText !== "") {
+//     fetchQuery();
+//   }
+// }, [searchText]);
+
+
 useEffect(() => {
   const fetchQuery = async () => {
     try {
-      const query = searchText;
-      const response = await fetch(`/api/search?query=${query}`);
+      let queryParams = "";
+      if (searchText.startsWith("#")) {
+        queryParams = `?tag=${searchText.slice(1)}`;
+        console.log(queryParams);
+      } else if (searchText.startsWith("@")) {
+        queryParams = `?quirkId=${searchText.slice(1)}`;
+        console.log(queryParams);
+
+      } else {
+        queryParams = `?query=${searchText}`;
+        console.log(queryParams);
+
+      }
+      const response = await fetch(`/api/search${queryParams}`);
       if (!response.ok) {
         throw new Error(`HTTP error: ${response.status}`);
       }
       const data = await response.json();
       console.log(data);
-    setFilterProfile(data)
+      setFilterProfile(data);
     } catch (error) {
       console.error(`Fetch problem: ${error.message}`);
     }

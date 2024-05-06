@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { FaStar } from "react-icons/fa";
 import { CiStar } from "react-icons/ci";
+import Link from "next/link";
 
 const Card = ({ post, handleTagClick, handleDelete }) => {
   const [userProfile, setUserProfile] = useState(null);
@@ -48,7 +49,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
   const fetchUser = async () => {
     try {
       const response = await fetch(
-        `/api/user-profile/${post.creator?._id}/user`,{ cache:"no-store"}
+        `/api/user-profile/${post.creator?._id}/user`
       );
       const data = await response.json();
       setUserProfile(data);
@@ -83,11 +84,11 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
 
           <div className="flex flex-col">
             <h3 className="font-satoshi font-semibold text-gray-900"></h3>
-            <p className="font-inter text-sm text-gray-500">
-              {userProfile?.UserProfiles?.length > 0
-                ? userProfile.UserProfiles[0].quirkId
-                : "Unknown User"}
-            </p>
+            <Link href={`/profile/${post.creator._id}`} className="font-inter text-sm text-gray-500">
+  {userProfile?.UserProfiles?.length > 0
+    ? userProfile.UserProfiles[0].quirkId
+    : "Unknown User"}
+</Link>
           </div>
           <div className="copy_btn" onClick={handleCopy}>
             <Image
