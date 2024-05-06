@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 import { FaStar } from "react-icons/fa";
 import { CiStar } from "react-icons/ci";
-import Link from "next/link";
 
 const Card = ({ post, handleTagClick, handleDelete }) => {
   const [userProfile, setUserProfile] = useState(null);
@@ -15,7 +15,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
   const router = useRouter();
   const [copied, setCopied] = useState("");
 
-  const AddStar = async (id) => {
+  const addStar = async (id) => {
     await fetch(`api/star-thought/${id}`, {
       method: "PATCH",
       headers: {
@@ -27,7 +27,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
     });
   };
 
-  const RemoveStar = async (id) => {
+  const removeStar = async (id) => {
     await fetch(`api/unstar-thought/${id}`, {
       method: "PATCH",
       headers: {
@@ -59,9 +59,8 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
   };
 
   useEffect(() => {
-
     fetchUser();
-  },3000, [post.creator?._id]);
+  },1000, [post.creator?._id]);
 
   return (
     <div className="feed_card">
@@ -112,10 +111,10 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
         {post.tag}
       </p>
       
-      {post?.star.some(starId => starId === session?.user?.id) ? (
-  <FaStar onClick={() => RemoveStar(session?.user?.id)} className="cursor-pointer" />
+{post?.star.some(starId => starId === session?.user?.id) ? (
+  <FaStar onClick={() => removeStar(session?.user?.id)} className="cursor-pointer" />
 ) : (
-  <CiStar onClick={() => AddStar(session?.user?.id)}  className="cursor-pointer" />
+  <CiStar onClick={() => addStar(session?.user?.id)} className="cursor-pointer" />
 )}
 
       {session?.user.id === post.creator?._id && pathName === "/profile" && (
