@@ -5,12 +5,20 @@ import ThoughtCard from "./Card";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { WhatsappIcon, WhatsappShareButton } from "next-share";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 const Profile = ({ userProfile, data, desc, handleDelete }) => {
   const { data: session } = useSession();
   const [copied, setCopied] = useState(false);
   const spanRef = useRef(null);
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  useEffect(() => {
+    setCurrentUrl(window.location.href);
+  }, []);
+  console.log(currentUrl);
+
 
   const handleCopy = () => {
     if (spanRef.current) {
@@ -53,7 +61,7 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
         )}
 
         <div className="copy_btn" onClick={handleCopy}>
-          <span ref={spanRef}>{`https://main--quirkify-1.netlify.app/profile/${userProfile?.creator?._id}`}</span>
+          <span ref={spanRef}>{`${currentUrl}`}</span>
           <Image
             src={copied ? "/assets/icons/tick.svg" : "/assets/icons/copy.svg"}
             alt={copied ? "Copied" : "Copy"}
@@ -63,7 +71,7 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
         </div>
 
         <WhatsappShareButton
-          url={`https://main--quirkify-1.netlify.app/profile/${userProfile?.creator?._id}`}
+          url={`${currentUrl}`}
           separator=":: "
         >
           <WhatsappIcon size={32} round />
@@ -83,4 +91,4 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
   );
 };
 
-export default Profile;
+export default Profile

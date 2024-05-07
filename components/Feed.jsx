@@ -117,7 +117,7 @@ useEffect(() => {
 
   const interval = setInterval(() => {
     fetchPosts();
-  }, 3500);
+  }, 1500);
 
   return () => clearInterval(interval);
 
