@@ -10,9 +10,9 @@ const ThoughtSchema = new Schema({
     type: String,
     required: [true, "Thoughts is required"],
   },
-  tag: {
+  tag: [{
     type: String,
-  },
+  }],
   star:[{
     type:Schema.Types.ObjectId,
     ref:'User'

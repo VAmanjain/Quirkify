@@ -18,6 +18,10 @@ const CreatePost = () => {
         setSubmitting(true);
         
         try {
+
+
+            // const tag = post.tag.startsWith('#') ? post.tag.slice(1) : post.tag;
+
             const response = await fetch ('api/thought/new', {
                 method:"POST", body:JSON.stringify({
                     thought:post.thought,

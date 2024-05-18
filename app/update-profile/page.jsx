@@ -23,29 +23,29 @@ const UpadateProfile = () => {
 
 
 
-  // ----Security---
-  useEffect(() => {
-      const redirectToPage = async () => {
-        if (status === "authenticated" && session?.user) {
-          try {
-            const response = await fetch(`/api/user-profile/${session.user.id}/user`);
-            const { UserProfiles } = await response.json();
-            if (Array.isArray(UserProfiles) && UserProfiles.length === 0) {
-              router.replace("/user-profile"); 
-            } else {
-              router.replace("/update-profile");
-            }
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-            router.replace("/profile"); 
-            alert("Something wents wrong");
-          }
-        } else if (status === "unauthenticated") {
-          router.replace("/"); 
-        }
-      };
-      redirectToPage();
-  }, [status, session, router]);
+  // // ----Security---
+  // useEffect(() => {
+  //     const redirectToPage = async () => {
+  //       if (status === "authenticated" && session?.user) {
+  //         try {
+  //           const response = await fetch(`/api/user-profile/${session.user.id}/user`);
+  //           const { UserProfiles } = await response.json();
+  //           if (Array.isArray(UserProfiles) && UserProfiles.length === 0) {
+  //             router.replace("/user-profile"); 
+  //           } else {
+  //             router.replace("/update-profile");
+  //           }
+  //         } catch (error) {
+  //           console.error("Error fetching user data:", error);
+  //           router.replace("/profile"); 
+  //           alert("Something wents wrong");
+  //         }
+  //       } else if (status === "unauthenticated") {
+  //         router.replace("/"); 
+  //       }
+  //     };
+  //     redirectToPage();
+  // }, [status, session, router]);
 
   const fetchUser = async (sessionId) => {
     try {

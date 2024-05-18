@@ -11,30 +11,30 @@ const Landing = () => {
   const { data: session, status } = useSession();
   const [userInfo, setUserInfo] = useState([]);
 
-  useEffect(() => {
-    const redirectToPage = async () => {
-      if (status === "authenticated" && session?.user) {
-        try {
-          const response = await fetch(
-            `/api/user-profile/${session.user.id}/user`
-          );
-          const { UserProfiles } = await response.json();
-          if (Array.isArray(UserProfiles) && UserProfiles.length === 0) {
-            router.replace("/user-profile"); //
-          } else {
-            router.replace("/explore");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          router.replace("/user-profile"); //
-        }
-      } else if (status === "unauthenticated") {
-        router.replace("/");
-      }
-    };
+  // useEffect(() => {
+  //   const redirectToPage = async () => {
+  //     if (status === "authenticated" && session?.user) {
+  //       try {
+  //         const response = await fetch(
+  //           `/api/user-profile/${session.user.id}/user`
+  //         );
+  //         const { UserProfiles } = await response.json();
+  //         if (Array.isArray(UserProfiles) && UserProfiles.length === 0) {
+  //           router.replace("/user-profile"); //
+  //         } else {
+  //           router.replace("/explore");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching user data:", error);
+  //         router.replace("/user-profile"); //
+  //       }
+  //     } else if (status === "unauthenticated") {
+  //       router.replace("/");
+  //     }
+  //   };
 
-    redirectToPage();
-  }, [status, session, router]);
+  //   redirectToPage();
+  // }, [status, session, router]);
 
   useEffect(() => {
     if (session?.user?.id) {

@@ -10,4 +10,4 @@ export const GET =async(request, {params})=>{
     } catch (error) {
         return new Response( "Failed to fetch all the data", {status:500})
     }
-}
+}   

@@ -14,6 +14,7 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
   const spanRef = useRef(null);
   const [currentUrl, setCurrentUrl] = useState('');
 
+  console.log(userProfile);
   useEffect(() => {
     setCurrentUrl(window.location.href);
   }, []);
@@ -42,11 +43,10 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
         <p>Bio: {userProfile?.bio}</p>
         <Image
           src={
-            userProfile?.UserProfiles?.length > 0 &&
-            userProfile.UserProfiles[0].image
-              ? userProfile.UserProfiles[0].image.startsWith("/")
-                ? userProfile.UserProfiles[0].image
-                : `/${userProfile.UserProfiles[0].image}`
+            userProfile?.image
+              ? userProfile?.image.startsWith("/")
+                ? userProfile?.image
+                : `/${userProfile?.image}`
               : ""
           }
           alt="user_image"

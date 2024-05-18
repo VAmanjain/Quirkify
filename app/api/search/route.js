@@ -6,166 +6,178 @@ export const GET = async (request) => {
   try {
     await connectToDB();
 
-    const query = request.nextUrl.searchParams.get('query');
-    const tag = request.nextUrl.searchParams.get('tag');
-    const quirkId = request.nextUrl.searchParams.get('quirkId');
+    const query = request.nextUrl.searchParams.get("query");
+    const tag = request.nextUrl.searchParams.get("tag");
+    const quirkId = request.nextUrl.searchParams.get("quirkId");
+    console.log({ query, quirkId, tag });
 
-    if (!query && !tag && !quirkId) return new Response("query, tag, and quirkId are empty");
+    if (!query && !tag && !quirkId)
+      return new Response("query, tag, and quirkId are empty");
 
     const N = 10; // Overall number of user profiles you want to retrieve
     let matchQuery = {};
-    let UserProfiles 
+    let UserProfiles;
     if (tag) {
-     
- matchQuery = { tags: { $regex: `^${tag}`, $options: 'i' } };
-console.log(matchQuery);
-     matchQuery = { tags: { $regex: `^${tag}`, $options: 'i' } };
-//      UserProfiles = await Thought.aggregate([
-//   { $match: matchQuery },
-//   { $sort: { createAt: -1 } },
-//   { $lookup: {
-//     from: 'users',
-//     localField: 'creator',
-//     foreignField: '_id',
-//     as: 'creator'
-//   }},
-//   { $unwind: '$creator' },
-//   { $addFields: { 'creator.image': '$image' } },
-//   { $lookup: {
-//     from: 'userprofiles',
-//     localField: 'creator._id',
-//     foreignField: 'creator',
-//     as: 'userprofile'
-//   }},
-//   { $unwind: '$userprofile' },
-//   { $sort: { 'userprofile.createdAt': -1 } },
-//   { $limit: N },
-//   { $group: {
-//     _id: '$_id',
-//     creator: { $first: '$creator' },
-//     thoughts: { $push: '$thought' },
-//     quirkId: { $first: '$quirkId' },
-//     tags: { $first: '$tags' }
-//   }},
-//   { $project: {
-//     _id: 1,
-//     creator: 1,
-//     thoughts: 1,
-//     quirkId: 1,
-//     tags: 1
-//   }}
-// ]);
-//     } else if (quirkId ) {
-//       matchQuery = { quirkId: { $regex: `^${quirkId}`, $options: 'i' } };
-//        UserProfiles = await UserProfile.aggregate([
-//         { $match: matchQuery },
-//         { $sort: { createdAt: -1 } },
-//         { $lookup: {
-//           from: 'users',
-//           localField: 'creator',
-//           foreignField: '_id',
-//           as: 'creator'
-//         }},
-//         { $unwind: '$creator' },
-//         { $addFields: { 'creator.image': '$image' } },
-//         { $lookup: {
-//           from: 'thoughts',
-//           localField: 'creator._id',
-//           foreignField: 'creator',
-//           as: 'thoughts'
-//         }},
-//         { $unwind: '$thoughts' },
-//         { $sort: { 'thoughts.createdAt': -1 } },
-//         { $limit: N },
-//         { $group: {
-//           _id: '$_id',
-//           creator: { $first: '$creator' },
-//           thoughts: { $push: '$thoughts' },
-//           quirkId: { $first: '$quirkId' },
-//           tags: { $first: '$tags' }
-//         }},
-//         { $project: {
-//           _id: 1,
-//           creator: 1,
-//           thoughts: 1,
-//           quirkId: 1,
-//           tags: 1
-//         }}
-//       ]);
-UserProfiles = await Thought.aggregate([
-  { $match: matchQuery }, // Match documents based on the query criteria
-  { $sort: { createAt: -1 } }, // Sort the matched documents by 'createAt' field in descending order
-  { $lookup: {
-    from: 'users',
-    localField: 'creator',
-    foreignField: '_id',
-    as: 'creator'
-  }}, // Perform a lookup to fetch user details
-  { $unwind: '$creator' }, // Deconstruct the 'creator' array
-  { $addFields: { 'creator.image': '$image' } }, // Add the 'image' field from thought to creator
-  { $lookup: {
-    from: 'userprofiles',
-    localField: 'creator._id',
-    foreignField: 'creator',
-    as: 'userprofile'
-  }}, // Perform a lookup to fetch user profile details
-  { $unwind: '$userprofile' }, // Deconstruct the 'userprofile' array
-  { $sort: { 'userprofile.createdAt': -1 } }, // Sort the user profiles by 'createdAt' field in descending order
-  { $limit: N }, // Limit the number of results to N
-  { $group: {
-    _id: '$_id',
-    creator: { $first: '$creator' },
-    thoughts: { $push: '$thought' },
-    quirkId: { $first: '$quirkId' },
-    tags: { $first: '$tags' }
-  }}, // Group the results
-  { $project: {
-    _id: 1,
-    creator: 1,
-    thoughts: 1,
-    quirkId: 1,
-    tags: 1
-  }} // Project the desired fields
-]);
-    } else {
-      matchQuery = { quirkId: { $regex: `^${query}`, $options: 'i' } };
-       UserProfiles = await UserProfile.aggregate([
+      matchQuery = { tag: { $regex: `^${tag}`, $options: "i" } };
+      console.log(matchQuery);
+      UserProfiles = await Thought.aggregate([
+        // Match with tag
+        { $match: { tag: { $regex: `^${tag}`, $options: "i" } } },
+
+        // Sort descendingly with createAt
+        { $sort: { createAt: -1 } },
+
+        // Left Join with User model (ref a creator in thoughts model)
+        {
+          $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+          },
+        },
+
+        // Left Join with UserProfile with the creator._id
+        {
+          $lookup: {
+            from: "userProfiles",
+            localField: "creator._id",
+            foreignField: "creator",
+            as: "creator.profile",
+          },
+        },
+
+        // Unwind the creator array
+        { $unwind: "$creator" },
+
+        // Unwind the creator.profile array
+        { $unwind: "$creator.profile" },
+
+        // Project the desired fields
+        {
+          $project: {
+            _id: 1,
+            "creator.profile": 1,
+            thought: 1,
+            tag: 1,
+            star: 1,
+            createAt: 1,
+          },
+        },
+      ]);
+      console.log(UserProfiles);
+    } else if (quirkId) {
+      matchQuery = { quirkId: { $regex: `^${quirkId}`, $options: "i" } };
+      UserProfiles = await UserProfile.aggregate([
+        // Match with quirkId
         { $match: matchQuery },
-        { $sort: { createdAt: -1 } },
-        { $lookup: {
-          from: 'users',
-          localField: 'creator',
-          foreignField: '_id',
-          as: 'creator'
-        }},
-        { $unwind: '$creator' },
-        { $addFields: { 'creator.image': '$image' } },
-        { $lookup: {
-          from: 'thoughts',
-          localField: 'creator._id',
-          foreignField: 'creator',
-          as: 'thoughts'
-        }},
-        { $unwind: '$thoughts' },
-        { $sort: { 'thoughts.createdAt': -1 } },
-        { $limit: N },
-        { $group: {
-          _id: '$_id',
-          creator: { $first: '$creator' },
-          thoughts: { $push: '$thoughts' },
-          quirkId: { $first: '$quirkId' },
-          tags: { $first: '$tags' }
-        }},
-        { $project: {
-          _id: 1,
-          creator: 1,
-          thoughts: 1,
-          quirkId: 1,
-          tags: 1
-        }}
+
+        // Sort descendingly with createAt
+        { $sort: { createAt: -1 } },
+
+        // Left Join with User model (ref a creator in UserProfile model)
+        {
+          $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+          },
+        },
+
+        // Unwind the creator array
+        { $unwind: "$creator" },
+
+        // Left Join with Thought with the creator._id
+        {
+          $lookup: {
+            from: "thoughts",
+            localField: "creator._id",
+            foreignField: "creator",
+            as: "thoughts",
+          },
+        },
+
+        // Unwind the thoughts array
+        { $unwind: "$thoughts" },
+
+        // Project the desired fields
+        {
+          $project: {
+            _id: "$thoughts._id",
+            "creator.profile": {
+              _id: "$_id",
+              creator: "$creator._id",
+              quirkId: "$quirkId",
+              bio: "$bio",
+              image: "$image",
+              createAt: "$createAt",
+              updateAt: "$updateAt",
+            },
+            thought: "$thoughts.thought",
+            tag: "$thoughts.tag",
+            star: "$thoughts.star",
+            createAt: "$thoughts.createAt",
+          },
+        },
+      ]);
+    } else {
+      matchQuery = { quirkId: { $regex: `^${query}`, $options: "i" } };
+      UserProfiles = await UserProfile.aggregate([
+        // Match with quirkId
+        { $match: matchQuery },
+
+        // Sort descendingly with createAt
+        { $sort: { createAt: -1 } },
+
+        // Left Join with User model (ref a creator in UserProfile model)
+        {
+          $lookup: {
+            from: "users",
+            localField: "creator",
+            foreignField: "_id",
+            as: "creator",
+          },
+        },
+
+        // Unwind the creator array
+        { $unwind: "$creator" },
+
+        // Left Join with Thought with the creator._id
+        {
+          $lookup: {
+            from: "thoughts",
+            localField: "creator._id",
+            foreignField: "creator",
+            as: "thoughts",
+          },
+        },
+
+        // Unwind the thoughts array
+        { $unwind: "$thoughts" },
+
+        // Project the desired fields
+        {
+          $project: {
+            _id: "$thoughts._id",
+            "creator.profile": {
+              _id: "$_id",
+              creator: "$creator._id",
+              quirkId: "$quirkId",
+              bio: "$bio",
+              image: "$image",
+              createAt: "$createAt",
+              updateAt: "$updateAt",
+            },
+            thought: "$thoughts.thought",
+            tag: "$thoughts.tag",
+            star: "$thoughts.star",
+            createAt: "$thoughts.createAt",
+          },
+        },
       ]);
     }
-  console.log('Aggregation results:', UserProfiles);
+    console.log("Aggregation results:", UserProfiles);
 
     return new Response(JSON.stringify(UserProfiles), { status: 200 });
   } catch (error) {

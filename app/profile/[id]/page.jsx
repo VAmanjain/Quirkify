@@ -40,11 +40,11 @@ const ViewProfile = ({ params }) => {
     return () => clearInterval(interval); // Cleanup interval on component unmount
   }, [paramsId]);
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace("/"); // Redirect user to home page if not authenticated
-    }
-  }, [status, router]);
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.replace("/"); // Redirect user to home page if not authenticated
+  //   }
+  // }, [status, router]);
 
   const handleDelete = async (post) => {
     const hasConfirmed = confirm("Are you sure you want to delete this post?");

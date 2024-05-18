@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FaStar } from "react-icons/fa";
 import { CiStar } from "react-icons/ci";
 
-const Card = ({ post, handleTagClick, handleDelete }) => {
+const Card = ({ post, handleDelete, fetchQuery, setSearchText }) => {
   const [userProfile, setUserProfile] = useState(null);
   const { data: session } = useSession();
   const pathName = usePathname();
@@ -25,6 +25,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
         thoughtId: post._id,
       }),
     });
+    fetchQuery();
   };
 
   const removeStar = async (id) => {
@@ -38,6 +39,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
       }),
     },
    {cache:"no-store"});
+   fetchQuery();
   };
 
   const handleCopy = () => {
@@ -83,7 +85,7 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
 
           <div className="flex flex-col">
             <h3 className="font-satoshi font-semibold text-gray-900"></h3>
-            <Link href={`/profile/${post.creator._id}`} className="font-inter text-sm text-gray-500">
+            <Link href={`/profile/${post.creator?._id}`} className="font-inter text-sm text-gray-500">
   {userProfile?.UserProfiles?.length > 0
     ? userProfile.UserProfiles[0].quirkId
     : "Unknown User"}
@@ -104,12 +106,20 @@ const Card = ({ post, handleTagClick, handleDelete }) => {
         </div>
       </div>
       <p className="my-4 font-satoshi text-sm text-gray-700">{post.thought}</p>
-      <p
-        className="font-inter text-sm blue_gradient cursor-pointer"
-        onClick={() => handleTagClick && handleTagClick(post.tag)}
-      >
-        {post.tag}
-      </p>
+    
+
+{post.tag.map((tag, index) => (
+  <p
+    className="font-inter text-sm blue_gradient cursor-pointer"
+    onClick={()=>setSearchText(`#${tag}`)}
+    key={index}
+  >
+    {`#${tag}`}
+  </p>
+))}
+
+        {/* {`#${post.tag}`} */}
+    
       
 {post?.star.some(starId => starId === session?.user?.id) ? (
   <FaStar onClick={() => removeStar(session?.user?.id)} className="cursor-pointer" />
