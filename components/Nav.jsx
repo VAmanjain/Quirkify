@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
+
 
 const Nav = () => {
   const { data: session } = useSession();
@@ -63,7 +65,17 @@ const Nav = () => {
             </button>
 
             <Link href="/profile">
-              <Image
+            <Avatar>
+  <AvatarImage  src={userProfile?.UserProfiles?.length > 0 &&
+                  userProfile.UserProfiles[0].image.startsWith("/")
+                    ? userProfile.UserProfiles[0].image
+                    : userProfile?.UserProfiles?.length > 0
+                    ? `/${userProfile.UserProfiles[0].image}`
+                    : `${session?.user.image}`} />
+  
+</Avatar>
+
+              {/* <Image
                 src={
                   userProfile?.UserProfiles?.length > 0 &&
                   userProfile.UserProfiles[0].image.startsWith("/")
@@ -76,7 +88,7 @@ const Nav = () => {
                 height={37}
                 className="rounded-full"
                 alt="profile"
-              />
+              /> */}
             </Link>
           </div>
         ) : (

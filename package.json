@@ -12,6 +12,7 @@
     "@ariakit/react": "^0.4.5",
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.3",
+    "@radix-ui/react-avatar": "^1.0.4",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
