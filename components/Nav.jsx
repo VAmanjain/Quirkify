@@ -4,8 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar"
-
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Skeleton } from "./ui/skeleton";
 
 const Nav = () => {
   const { data: session } = useSession();
@@ -40,42 +47,74 @@ const Nav = () => {
   }, []);
 
   return (
-    <nav className="flex-between w-full mb-16 pt-3">
+    <nav className="flex mx-auto justify-between items-center w-full mb-16 pt-3 max-w-[1100px] ">
       <Link href="/" className="flex gap-2 flex-center">
-        <Image
-          src="/assets/images/logo.svg"
-          alt="logo"
-          width={30}
-          height={30}
-          className="object-contain"
-        />
-        <p className="logo_text">Quirkify</p>
+        <p className="text-transparent bg-clip-text leading-12 bg-gradient-to-r from-green-400 to-purple-500 lg:inline text-2xl font-bold">Quirkify</p>
       </Link>
-
       {/* Desktop Navigation */}
       <div className="sm:flex hidden">
         {session?.user ? (
           <div className="flex gap-3 md:gap-5">
-            <Link href="/create-post" className="black_btn">
-              Create Post
+            <Link href="/create-post">
+              <Button variant="outline" className="rounded-full">
+                {" "}
+                Create Post
+              </Button>
             </Link>
-
-            <button type="button" onClick={signOut} className="outline_btn">
+            <Button
+              variant="secondary"
+              type="button"
+              onClick={signOut}
+              className="rounded-full"
+            >
               Sign Out
-            </button>
+            </Button>
+            {userProfile.UserProfiles ? (
+              <Link href="/profile">
+                <Image
+                  src={
+                    userProfile?.UserProfiles?.length > 0 &&
+                    userProfile.UserProfiles[0].image.startsWith("/")
+                      ? userProfile.UserProfiles[0].image
+                      : userProfile?.UserProfiles?.length > 0
+                      ? `/${userProfile.UserProfiles[0].image}`
+                      : `${session?.user.image}`
+                  }
+                  width={37}
+                  height={37}
+                  className="rounded-full"
+                />
+              </Link>
+            ) : (
+              <Skeleton className="h-12 w-12 rounded-full" />
+            )}
+          </div>
+        ) : (
+          <>
+            {providers &&
+              Object.values(providers).map((provider) => (
+                <Button
+                  type="button"
+                  key={provider.name}
+                  onClick={() => {
+                    signIn(provider.id);
+                  }}
+                  variant="secondary"
+                  className="rounded-full"
+                >
+                  Sign in
+                </Button>
+              ))}
+          </>
+        )}
+      </div>
 
-            <Link href="/profile">
-            <Avatar>
-  <AvatarImage  src={userProfile?.UserProfiles?.length > 0 &&
-                  userProfile.UserProfiles[0].image.startsWith("/")
-                    ? userProfile.UserProfiles[0].image
-                    : userProfile?.UserProfiles?.length > 0
-                    ? `/${userProfile.UserProfiles[0].image}`
-                    : `${session?.user.image}`} />
-  
-</Avatar>
-
-              {/* <Image
+      {/* Mobile Navigation */}
+      <div className="sm:hidden flex relative">
+        {session?.user ? (
+          <div className="flex">
+            {userProfile.UserProfiles ? (
+              <Image
                 src={
                   userProfile?.UserProfiles?.length > 0 &&
                   userProfile.UserProfiles[0].image.startsWith("/")
@@ -88,47 +127,11 @@ const Nav = () => {
                 height={37}
                 className="rounded-full"
                 alt="profile"
-              /> */}
-            </Link>
-          </div>
-        ) : (
-          <>
-            {providers &&
-              Object.values(providers).map((provider) => (
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => {
-                    signIn(provider.id);
-                  }}
-                  className="black_btn"
-                >
-                  Sign in
-                </button>
-              ))}
-          </>
-        )}
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="sm:hidden flex relative">
-        {session?.user ? (
-          <div className="flex">
-            <Image
-              src={
-                userProfile?.UserProfiles?.length > 0 &&
-                userProfile.UserProfiles[0].image.startsWith("/")
-                  ? userProfile.UserProfiles[0].image
-                  : userProfile?.UserProfiles?.length > 0
-                  ? `/${userProfile.UserProfiles[0].image}`
-                  : `${session?.user.image}`
-              }
-              width={37}
-              height={37}
-              className="rounded-full"
-              alt="profile"
-              onClick={() => setToggleDropdown(!toggleDropdown)}
-            />
+                onClick={() => setToggleDropdown(!toggleDropdown)}
+              />
+            ) : (
+              <Skeleton className="h-8 w-8 rounded-full" />
+            )}
 
             {toggleDropdown && (
               <div className="dropdown">
@@ -152,7 +155,7 @@ const Nav = () => {
                     setToggleDropdown(false);
                     signOut();
                   }}
-                  className="mt-5 w-full black_btn"
+                  className="mt-2 pt-2 border-t-2 border-white w-full black_btn text-white "
                 >
                   Sign Out
                 </button>
@@ -163,16 +166,17 @@ const Nav = () => {
           <>
             {providers &&
               Object.values(providers).map((provider) => (
-                <button
+                <Button
+                  variant="secondary"
                   type="button"
                   key={provider.name}
                   onClick={() => {
                     signIn(provider.id);
                   }}
-                  className="black_btn"
+                  className="rounded-full"
                 >
                   Sign in
-                </button>
+                </Button>
               ))}
           </>
         )}

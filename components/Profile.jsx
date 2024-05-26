@@ -1,25 +1,40 @@
-"use client"
+"use client";
 
 import Link from "next/link";
 import ThoughtCard from "./Card";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { WhatsappIcon, WhatsappShareButton } from "next-share";
 import { useState, useRef, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { EditProfile } from "./EditProfile";
+import ShareUrl from "./share";
+import { Separator } from "./ui/separator";
+import { Skeleton } from "./ui/skeleton";
 
 const Profile = ({ userProfile, data, desc, handleDelete }) => {
   const { data: session } = useSession();
   const [copied, setCopied] = useState(false);
   const spanRef = useRef(null);
-  const [currentUrl, setCurrentUrl] = useState('');
+  const [currentUrl, setCurrentUrl] = useState("");
+  const pathname = usePathname();
+  console.log(pathname);
 
-  console.log(userProfile);
+  const shareLink = () => {
+    if (pathname !== "/profile") {
+      setCurrentUrl(window.location.href);
+    } else {
+      const originUrl = window.location.href;
+      const url = originUrl.concat(`/${userProfile?.creator?._id}`);
+      setCurrentUrl(url);
+    }
+  };
+
   useEffect(() => {
-    setCurrentUrl(window.location.href);
-  }, []);
-  console.log(currentUrl);
+    shareLink();
+  }, [pathname, userProfile]);
 
+  // console.log(originUrl);
+  // var url= originUrl.concat(`/profile/${session?.}`)
 
   const handleCopy = () => {
     if (spanRef.current) {
@@ -33,52 +48,50 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
   };
 
   return (
-    <section className="max-w-[768px]">
-      <h1 className="head_text text-left">
-        <span className="blue_gradient">{userProfile?.quirkId}'s Profile</span>
+    <section className="max-w-[768px] w-full mx-auto">
+      <h1 className="w-full flex justify-center mb-3  ">
+        {userProfile?
+        <span className="text-3xl font-semibold  ">
+          {userProfile?.quirkId}'s Profile
+        </span>:
+        <Skeleton className="text-3xl font-semibold h-10 w-[250px] "/>
+        }
       </h1>
-      <p className="desc text-left">{desc}</p>
-
-      <div className="mt-5">
-        <p>Bio: {userProfile?.bio}</p>
-        <Image
-          src={
-            userProfile?.image
-              ? userProfile?.image.startsWith("/")
-                ? userProfile?.image
-                : `/${userProfile?.image}`
-              : ""
-          }
-          alt="user_image"
-          width={40}
-          height={40}
-          className="rounded-full object-contain"
-        />
-        {session?.user?.id && session?.user?.id === userProfile?.creator?._id && (
-          <Link href="/update-profile" className="black_btn">
-            Edit
-          </Link>
-        )}
-
-        <div className="copy_btn" onClick={handleCopy}>
-          <span ref={spanRef}>{`${currentUrl}`}</span>
+      <div className=" w-full flex justify-center my-2 ">
+        {userProfile ? (
           <Image
-            src={copied ? "/assets/icons/tick.svg" : "/assets/icons/copy.svg"}
-            alt={copied ? "Copied" : "Copy"}
-            width={12}
-            height={12}
+            src={
+              userProfile?.image
+                ? userProfile?.image.startsWith("/")
+                  ? userProfile?.image
+                  : `/${userProfile?.image}`
+                : ""
+            }
+            alt="user_image"
+            width={100}
+            height={100}
+            className="rounded-full object-contain w-[10rem] "
           />
-        </div>
-
-        <WhatsappShareButton
-          url={`${currentUrl}`}
-          separator=":: "
-        >
-          <WhatsappIcon size={32} round />
-        </WhatsappShareButton>
+        ) : (
+          <Skeleton className="h-[10rem] w-[10rem] rounded-full" />
+        )}
       </div>
 
-      <div className="mt-16 prompt_layout">
+      <div className="mt-5 text-[1.2rem] text-center   ">
+        {userProfile?
+        
+        <p> {userProfile?.bio}</p>:
+        <Skeleton className=" mt-5 text-[1.2rem] mx-auto text-center h-8 w-[350px]" />
+
+      }
+      </div>
+      <div className="grid grid-flow-col mt-2 gap-4 p-2 ">
+        {session?.user?.id &&
+          session?.user?.id === userProfile?.creator?._id && <EditProfile />}
+        <ShareUrl link={currentUrl} />
+      </div>
+      <Separator className="my-4" />
+      <div className="mt-16 feed_layout">
         {data.map((post) => (
           <ThoughtCard
             key={post._id}
@@ -91,4 +104,4 @@ const Profile = ({ userProfile, data, desc, handleDelete }) => {
   );
 };
 
-export default Profile
+export default Profile;

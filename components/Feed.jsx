@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useDebounce } from "use-debounce";
 import FilterCardList from "./FilterCardList";
 import ThoughtCardList from "./ThoughtCardList";
+import { Input } from "./ui/input";
 
 const Feed = () => {
   const [searchText, setSearchText] = useState("");
@@ -53,23 +54,21 @@ const Feed = () => {
 
     const interval = setInterval(() => {
       fetchPosts();
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="feed max-w-[768px]">
+    <section className="feed mx-auto max-w-[768px]  ">
       <form className="relative w-full flex-center">
-        <input
-          type="text"
-          placeholder="Find through tag and username"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          required
-          className="search_input peer"
-        />
+         <Input type="text" placeholder="Find through tag and username"
+         value={searchText}
+         onChange={(e) => setSearchText(e.target.value)}
+         required
+          />
       </form>
+      
       {searchText !== "" ? (
         <FilterCardList
           userProfiles={filterProfile}

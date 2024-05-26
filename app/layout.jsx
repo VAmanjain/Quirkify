@@ -11,10 +11,10 @@ export const metadata = {
 const RootLayout = ({ children }) => {
   return (
     <html lang="en">
-      <body>
+      <body className="px-6">
         <Provider>
-          <div className="main">
-            <div className="Quirkify bg-black" />
+          <div className="main ">
+            <div className="dark" />
           </div>
 
           <main className="app">

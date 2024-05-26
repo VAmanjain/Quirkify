@@ -2,9 +2,9 @@
 import ThoughtCard from "./Card";
 
 const ThoughtCardList = ({ data , fetchQuery, setSearchText}) => {
-    console.log(data);
+    
     return (
-      <div className="mt-16 feed_layout">
+      <div className="mt-16 w-full flex flex-col gap-2 justify-start items-center ">
         {data.map((post) => (
           <ThoughtCard
             key={post._id}

@@ -7,14 +7,13 @@ const nextConfig = {
     images: {
       domains: ['lh3.googleusercontent.com'],
     },
-    webpack(config) {
-      config.experiments = {
-        ...config.experiments,
-        topLevelAwait: true,
-      }
-      return config
-    }
-    ,
+
+      webpack: (config, { isServer }) => {
+        if (!isServer) {
+          config.cache = false;
+        }
+        return config;
+      },
     logging:{
       fetches:{
         fullUrl:true

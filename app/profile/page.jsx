@@ -11,19 +11,25 @@ const MyProfile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const router = useRouter();
   const { data: session, status } = useSession();
-
+  const [interval, setInterval]= useState('')
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.replace("/");
-    } else if (status === "authenticated" && session?.user) {
-      const storedSessionId = localStorage.getItem("sessionId");
-      if (storedSessionId) {
-        fetchData(storedSessionId);
-      } else {
-        localStorage.setItem("sessionId", session.user.id);
-        fetchData(session.user.id);
+    const handleAuthentication = async () => {
+      if (status === "unauthenticated") {
+        router.replace("/");
+      } else if (status === "authenticated" && session?.user) {
+        const storedSessionId = localStorage.getItem("sessionId");
+        if (storedSessionId) {
+          await fetchData(storedSessionId);
+        } else {
+          localStorage.setItem("sessionId", session.user.id);
+          await fetchData(session.user.id);
+        }
       }
-    }
+    };
+  
+    const interval = setInterval(handleAuthentication, 10000);
+  
+    return () => clearInterval(interval);
   }, [status, session, router]);
 
   const fetchData = async (sessionId) => {
@@ -64,6 +70,7 @@ const MyProfile = () => {
       desc="Welcome to your personalized profile"
       data={posts}
       handleDelete={handleDelete}
+      
     />
   );
 };

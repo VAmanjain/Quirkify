@@ -1,142 +1,137 @@
-'use client'
+"use client";
 
-import  { useState } from 'react';
-import '@./styles/globals.css'
-import * as Ariakit from "@ariakit/react";
+import { useState } from "react";
+import "@./styles/globals.css";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Example({ onSelect }) {
-  const dialog = Ariakit.useDialogStore();
   const [selectGender, setSelectGender] = useState("");
 
-
   const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const defaultSelectedId = "default-selected-tab";
 
   const maleAvatars = [
-   
-    'Assests/male3.jpeg',
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
     // Add more avatar options here
   ];
   const femaleAvatars = [
-    'Assests/male1.jpeg',
-   
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+    "Assests/male3.jpeg",
+    "Assests/male1.jpeg",
+
     // Add more avatar options here
   ];
 
-const handlegenderImage = ({gender})=>{
-  setSelectGender(gender);
-  console.log(selectGender);
-}
-  
+  const handlegenderImage = ({ gender }) => {
+    setSelectGender(gender);
+    console.log(selectGender);
+  };
+
   const handleSelectAvatar = (avatar) => {
     setSelectedAvatar(avatar);
     onSelect(avatar); // Pass selected avatar to parent component
   };
 
-
   return (
     <>
-      <Ariakit.Button onClick={dialog.show} className="button">
-        change
-      </Ariakit.Button>
-      <Ariakit.Dialog
-        store={dialog}
-        backdrop={<div className="backdrop" />}
-        className="dialog"
-      >
-        <Ariakit.DialogHeading className="heading">
-          Choose your Avatar
-        </Ariakit.DialogHeading>
-        {/* <Ariakit.TabProvider defaultSelectedId={defaultSelectedId}>
-        <Ariakit.TabList className="tab-list" aria-label="Groceries">
-          <Ariakit.Tab className="tab">Fruits</Ariakit.Tab>
-          <Ariakit.Tab className="tab" id={defaultSelectedId}>
-            Vegetables
-          </Ariakit.Tab>
-          <Ariakit.Tab className="tab">Meat</Ariakit.Tab>
-        </Ariakit.TabList>
-        <div className="panels">
-          <Ariakit.TabPanel>
-            <div className="avatar-picker">
-        {avatars.map((avatar, index) => (
-          <Ariakit.DialogDismiss >
-          <img
-            key={index}
-            src={avatar}
-            alt={`Avatar ${index + 1}`}
-            className={selectedAvatar === avatar ? 'selected' : ''}
-            onClick={() => {handleSelectAvatar(avatar)}}
-          />
-          </Ariakit.DialogDismiss>
-        ))}
-      </div>
-          </Ariakit.TabPanel>
-          <Ariakit.TabPanel tabId={defaultSelectedId}>
-            <ul>
-              <li>🥕 Carrot</li>
-              <li>🧅 Onion</li>
-              <li>🥔 Potato</li>
-            </ul>
-          </Ariakit.TabPanel>
-          <Ariakit.TabPanel>
-            <ul>
-              <li>🥩 Beef</li>
-              <li>🍗 Chicken</li>
-              <li>🥓 Pork</li>
-            </ul>
-          </Ariakit.TabPanel>
-        </div>
-      </Ariakit.TabProvider> */}
-        <div className="avatar-picker">
-          <div className='flex justify-around '>
-
-<button className='button' onClick={()=>{
-  setSelectGender("male");
-
-}} >Male</button>
-<button className='button' onClick={()=>{
-  setSelectGender("Female");
-  
-}}>Female</button>
-          </div>
-        {selectGender==="male"?
-        <>
-        
-        {maleAvatars.map((avatar, index) => (
-          <Ariakit.DialogDismiss 
-          key={index}
-          
-          >
-          <img
-            src={avatar}
-            alt={`Avatar ${index + 1}`}
-            className={selectedAvatar === avatar ? 'selected' : ''}
-            onClick={() => {handleSelectAvatar(avatar)}}
-          />
-          </Ariakit.DialogDismiss>
-        ))}
-        </>
-        :<>
-        {femaleAvatars.map((avatar, index) => (
-          <Ariakit.DialogDismiss
-          key={index}
-          >
-          <img
-            
-            src={avatar}
-            alt={`Avatar ${index + 1}`}
-            className={selectedAvatar === avatar ? 'selected' : ''}
-            onClick={() => {handleSelectAvatar(avatar)}}
-          />
-          </Ariakit.DialogDismiss>
-        ))}
-        </>}
-      </div>
-        <div>
-          <Ariakit.DialogDismiss className="button">OK</Ariakit.DialogDismiss>
-        </div>
-      </Ariakit.Dialog>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Change</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Choose Your Avatar</DialogTitle>
+          </DialogHeader>
+          <Tabs defaultValue="male" className="">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="male">Male</TabsTrigger>
+              <TabsTrigger value="female">Female</TabsTrigger>
+            </TabsList>
+            <TabsContent value="male">
+              <Card className="h-[400px] overflow-y-scroll py-2 ">
+                <CardContent className="grid grid-cols-2 gap-2 ">
+                  {maleAvatars.map((avatar, index) => (
+                    <div key={index} className=" ">
+                      <DialogClose asChild>
+                        <img
+                          src={avatar}
+                          alt={`Avatar ${index + 1}`}
+                          className={
+                            selectedAvatar === avatar
+                              ? "selected rounded-xl "
+                              : "rounded-xl"
+                          }
+                          onClick={() => {
+                            handleSelectAvatar(avatar);
+                          }}
+                        />
+                      </DialogClose>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="female">
+              <Card className="h-[400px] overflow-y-scroll py-2 ">
+                <CardContent className="grid grid-cols-2 gap-2 ">
+                  {femaleAvatars.map((avatar, index) => (
+                    <div key={index} className=" ">
+                      <DialogClose asChild>
+                        <img
+                          src={avatar}
+                          alt={`Avatar ${index + 1}`}
+                          className={
+                            selectedAvatar === avatar
+                              ? "selected rounded-xl "
+                              : "rounded-xl"
+                          }
+                          onClick={() => {
+                            handleSelectAvatar(avatar);
+                          }}
+                        />
+                      </DialogClose>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

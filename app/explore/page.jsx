@@ -59,7 +59,7 @@ const Landing = () => {
       {error ? (
         <div>Error: {error.message}</div>
       ) : (
-        <Feed />
+        <Feed  />
       )}
     </div>
   );
