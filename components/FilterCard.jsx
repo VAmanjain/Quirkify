@@ -194,7 +194,7 @@ const starLength = star.length;
         </div>
 
         <Separator className="my-4" />
-        <div className=" w-full my-2 flex h-5 items-center justify-evenly space-x-4 text-sm">
+        <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1  sm:space-x-4 text-sm text-[0.8rem]">
         {star.some((starId) => starId === session?.user?.id) ? (
           <Button
             variant="ghost"
@@ -218,7 +218,7 @@ const starLength = star.length;
           <Button
             variant="ghost"
             onClick={handleCopy}
-            className=" w-full cursor-pointer flex "
+            className="w-full cursor-pointer flex text-sm text-[0.8rem] "
           >
             <Image
               src={
@@ -229,7 +229,7 @@ const starLength = star.length;
               alt={copied === thought ? "tick_icon" : "copy_icon"}
               width={12}
               height={12}
-              className="mx-2"
+              className="mx-1 sm:mx-2"
             />
             Copy
           </Button>

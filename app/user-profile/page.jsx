@@ -44,7 +44,7 @@ const UserProfile = () => {
   const createPost = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
+console.log(profile, session?.user?.id);
     try {
       const response = await fetch("api/user-profile", {
         method: "POST",
@@ -132,7 +132,11 @@ const UserProfile = () => {
               <div className="col-span-full">
 <div className="grid w-full gap-1.5">
       <Label htmlFor="message-2">Your Bio</Label>
-      <Textarea placeholder="Type your message here." id="message-2" />
+      <Textarea placeholder="Type your message here." id="message-2"
+       onChange={(e) =>
+        setProfile({ ...profile, bio: e.target.value })
+      }
+      />
       <p className="text-sm text-muted-foreground">
         Write what you want to tell.
       </p>

@@ -7,12 +7,18 @@ export const POST = async (req) => {
     if (!userId || !quirkId || !bio || !image) {
       throw new Error("Missing required fields in the request body");
     }
-    const UserExist = UserProfile.findOne({userId});
 
-    // if(UserExist){
-    //   return new Response ({message : 'quirkId is already exist , try something new '}, {status:201})
-    // }
     await connectToDB();
+
+    // Check if a user profile with the same userId already exists
+    const existingUserProfile = await UserProfile.findOne({ creator: userId });
+    if (existingUserProfile) {
+      return new Response(
+        JSON.stringify({ message: "A profile with the same userId already exists" }),
+        { status: 409 } // Conflict status code
+      );
+    }
+
     const newUserProfile = new UserProfile({
       creator: userId,
       quirkId,

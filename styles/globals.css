@@ -168,10 +168,9 @@ background-color: #000 !important;
 }
 
 .feed{
-  padding: 0.5rem;
   width: 100%;
   display: grid;
-  gap: 0.5rem;
+  /* gap: 0.5rem; */
   align-items: center;;
 }
 .feed_layout{
@@ -185,7 +184,7 @@ background-color: #000 !important;
 
 .feed_card{
   width: inherit;
-  background-color:#0d0e0d ;
+  background-color:#111111 ;
   border-radius: 8px;
   padding: 12px;
   max-width: 600px;

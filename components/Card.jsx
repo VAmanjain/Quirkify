@@ -270,7 +270,7 @@ const Card = ({ post, handleDelete, fetchQuery, setSearchText }) => {
   }, [post.creator?._id]);
 
   return (
-    <div className="feed_card">
+    <div className="feed_card  w-[90%] mx-auto sm:w-full  ">
       <div className="flex justify-between items-start gap-5">
         <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
           {userProfile?.UserProfiles ? (
@@ -330,10 +330,10 @@ const Card = ({ post, handleDelete, fetchQuery, setSearchText }) => {
 </div>
 
       <Separator className="my-4" />
-      <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-4 text-sm">
+      <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1  sm:space-x-4 text-sm text-[0.8rem] ">
         {post?.star.some((starId) => starId === session?.user?.id) ? (
           <Button variant="ghost" className="w-full" onClick={() => removeStar(session?.user?.id)}>
-            <FaStar className="cursor-pointer" />
+            <FaStar className="cursor-pointer " />
             <p className="mx-1">{starLength}</p>
           </Button>
         ) : (
@@ -343,13 +343,13 @@ const Card = ({ post, handleDelete, fetchQuery, setSearchText }) => {
           </Button>
         )}
         <Separator orientation="vertical" />
-        <Button variant="ghost" onClick={handleCopy} className="w-full cursor-pointer flex">
+        <Button variant="ghost" onClick={handleCopy} className="w-full cursor-pointer flex text-sm text-[0.8rem]">
           <Image
             src={copied === post?.thought ? "/assets/icons/tick.svg" : "/assets/icons/copy.svg"}
             alt={copied === post?.thought ? "tick_icon" : "copy_icon"}
             width={12}
             height={12}
-            className="mx-2"
+            className=" mx-1 sm:mx-2"
           />
           Copy
         </Button>

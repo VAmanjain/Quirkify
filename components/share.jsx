@@ -30,8 +30,8 @@ const ShareUrl=({link})=> {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="w-full flex ">Share
-          <RiShareForwardLine className="mx-1" size={20} />
+        <Button variant="ghost" className="w-full flex text-sm text-[0.8rem] ">Share
+          <RiShareForwardLine className="mx-1 sm:mx-2" size={20} />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
