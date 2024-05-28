@@ -5,8 +5,9 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ShareUrl from "./share";
+import { usePathname } from "next/navigation";
 
 const FilterCard = ({
   userProfile,
@@ -17,6 +18,25 @@ const FilterCard = ({
   const { creator, _id, thought, tag, star, createAt } = userProfile;
   const { data: session } = useSession();
   const [copied, setCopied] = useState("");
+  const pathname = usePathname();
+  const [currentUrl, setCurrentUrl] = useState("");
+console.log(userProfile);
+  const shareLink = () => {
+    if (pathname == `explore/:[id]` ) {
+      setCurrentUrl(window.location.href);
+    } 
+    else {
+      const originUrl = window.location.origin;
+      let url = originUrl.concat(`/explore`,`/${_id}`);
+      console.log(window.location.origin);
+
+      setCurrentUrl(url);
+    }
+  };
+
+  useEffect(() => {
+    shareLink();
+  }, [pathname, _id]);
 
   // Ensure tag is an array
   const tagsArray = Array.isArray(tag) ? tag : [tag];
@@ -71,53 +91,6 @@ const starLength = star.length;
   };
 
   return (
-    // <div className="card">
-    //   <div className="card-body">
-    //     <h1>{creator?.profile?.quirkId}</h1>
-    //     {creator.profile.image && (
-    //       <Image
-    //         src={`/${creator.profile.image}`}
-    //         width={40}
-    //         height={40}
-    //         alt="userAvatar"
-    //       />
-    //     )}
-    //     <p>
-    //       <strong>Creator ID:</strong> {creator.profile._id}
-    //     </p>
-    //     <p>
-    //       <strong>Thought ID:</strong> {_id}
-    //     </p>
-    //     <p>
-    //       <strong>Thought:</strong> {thought}
-    //     </p>
-    //     <p>
-    //       <strong>Tag:</strong>{" "}
-    //       {tagsArray.length > 0 ? (
-    //         <div>
-    //           {tagsArray.map((t, index) => (
-    //             <span key={index} onClick={()=>{setSearchText(`#${t}`)}} className="cursor-pointer" >{`#${t}`}</span>
-    //           ))}
-    //         </div>
-    //       ) : (
-    //         "No tags"
-    //       )}
-    //     </p>
-    //     {/* <p><strong>Starred By:</strong> {star.length > 0 ? star.join(", ") : "None"}</p> */}
-    //     {/* <p><strong>Created At:</strong> {new Date(createAt).toLocaleString()}</p> */}
-    //     {star.some((starId) => starId === session?.user?.id) ? (
-    //       <FaStar
-    //         onClick={() => removeStar(session?.user?.id)}
-    //         className="cursor-pointer"
-    //       />
-    //     ) : (
-    //       <CiStar
-    //         onClick={() => addStar(session?.user?.id)}
-    //         className="cursor-pointer"
-    //       />
-    //     )}
-    //   </div>
-    // </div>
     <>
       <div className="feed_card">
         <div className="flex justify-between items-start gap-5">
@@ -235,7 +208,7 @@ const starLength = star.length;
           </Button>
           <Separator orientation="vertical" />
 
-          <ShareUrl link="Not done yet" />
+          <ShareUrl link={currentUrl} />
         </div>
       </div>
     </>

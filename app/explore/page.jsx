@@ -14,26 +14,8 @@ const Landing = () => {
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/");
-    } else if (status === "authenticated" && session?.user) {
-      handleUserProfileRedirect(session.user.id);
     }
   }, [status, session, router]);
-
-  const handleUserProfileRedirect = async (userId) => {
-    try {
-      const response = await fetch(`/api/user-profile/${userId}/user`);
-      const { UserProfiles } = await response.json();
-
-      if (Array.isArray(UserProfiles) && UserProfiles.length === 0) {
-        router.replace("/user-profile");
-      } else {
-        router.replace("/explore");
-      }
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      router.replace("/user-profile");
-    }
-  };
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -54,15 +36,7 @@ const Landing = () => {
     }
   };
 
-  return (
-    <div>
-      {error ? (
-        <div>Error: {error.message}</div>
-      ) : (
-        <Feed  />
-      )}
-    </div>
-  );
+  return <div>{error ? <div>Error: {error.message}</div> : <Feed />}</div>;
 };
 
 export default Landing;

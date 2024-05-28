@@ -1,7 +1,7 @@
 
 import ThoughtCard from "./Card";
 
-const ThoughtCardList = ({ data , fetchQuery, setSearchText}) => {
+const ThoughtCardList = ({ data , fetchPosts, setSearchText}) => {
     
     return (
       <div className="mt-16 w-full flex flex-col gap-2 justify-start items-center ">
@@ -9,7 +9,7 @@ const ThoughtCardList = ({ data , fetchQuery, setSearchText}) => {
           <ThoughtCard
             key={post._id}
             post={post}
-            fetchQuery={fetchQuery}
+            fetchPosts={fetchPosts}
             setSearchText={setSearchText}
           />
         ))}

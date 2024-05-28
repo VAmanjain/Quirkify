@@ -80,13 +80,13 @@ const Nav = () => {
                       ? `/${userProfile.UserProfiles[0].image}`
                       : `${session?.user.image}`
                   }
-                  width={37}
-                  height={37}
+                  width={38}
+                  height={38}
                   className="rounded-full"
                 />
               </Link>
             ) : (
-              <Skeleton className="h-12 w-12 rounded-full" />
+              <Skeleton className="h-[2.4rem] w-[2.4rem] rounded-full" />
             )}
           </div>
         ) : (
@@ -130,7 +130,7 @@ const Nav = () => {
                 onClick={() => setToggleDropdown(!toggleDropdown)}
               />
             ) : (
-              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-[2.4rem] w-[2.4rem] rounded-full" />
             )}
 
             {toggleDropdown && (

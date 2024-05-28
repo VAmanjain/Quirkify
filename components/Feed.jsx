@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useDebounce } from "use-debounce";
 import FilterCardList from "./FilterCardList";
 import ThoughtCardList from "./ThoughtCardList";
 import { Input } from "./ui/input";
@@ -10,7 +9,20 @@ const Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
   const [filterProfile, setFilterProfile] = useState([]);
-  const query = useDebounce(searchText, 2000);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchPosts();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (searchText !== "") {
+      fetchQuery();
+    }
+  }, [searchText]);
 
   const fetchQuery = async () => {
     try {
@@ -36,39 +48,30 @@ const Feed = () => {
       console.error(`Fetch problem: ${error.message}`);
     }
   };
-  useEffect(() => {
-    if (searchText !== "") {
-      fetchQuery();
-    }
-  }, [searchText]);
+  
+  const fetchPosts = async () => {
+    const response = await fetch("/api/thought", { cache: "no-store" });
+    const data = await response.json();
+    const sortedPosts = await data.sort(
+      (a, b) => new Date(b.createAt) - new Date(a.createAt)
+    );
+    setPosts(sortedPosts);
+  };
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch("/api/thought", { cache: "no-store" });
-      const data = await response.json();
-      const sortedPosts = data.sort(
-        (a, b) => new Date(b.createAt) - new Date(a.createAt)
-      );
-      setPosts(sortedPosts);
-    };
-
-    const interval = setInterval(() => {
-      fetchPosts();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, []);
+ 
 
   return (
     <section className="feed mx-auto max-w-[768px]  ">
       <form className="relative w-full flex-center">
-         <Input type="text" placeholder="Find through tag and username"
-         value={searchText}
-         onChange={(e) => setSearchText(e.target.value)}
-         required
-          />
+        <Input
+          type="text"
+          placeholder="Find through tag and username"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          required
+        />
       </form>
-      
+
       {searchText !== "" ? (
         <FilterCardList
           userProfiles={filterProfile}
@@ -76,7 +79,11 @@ const Feed = () => {
           setSearchText={setSearchText}
         />
       ) : (
-        <ThoughtCardList data={posts} fetchQuery={fetchQuery} setSearchText={setSearchText}   />
+        <ThoughtCardList
+          data={posts}
+          fetchPosts={fetchPosts}
+          setSearchText={setSearchText}
+        />
       )}
     </section>
   );

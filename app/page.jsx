@@ -39,7 +39,7 @@ const Home = () => {
             Quirkify is the noiseless platform for your thoughts. You can share
             your thoughts there.
           </p>
-          <div className="mb-4 space-x-0 md:space-x-2 md:mb-8  ">
+          <div className="mb-4 space-x-0 md:space-x-2 md:mb-8 grid sm:grid-flow-col justify-center  ">
             {providers &&
               Object.values(providers).map((provider) => (
                 <button
