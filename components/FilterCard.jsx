@@ -15,19 +15,18 @@ const FilterCard = ({
   setSearchText,
   handleTagClick,
 }) => {
-  const { creator, _id, thought, tag, star, createAt } = userProfile;
+  const { creator, _id, thought, tag, star, images } = userProfile;
   const { data: session } = useSession();
   const [copied, setCopied] = useState("");
   const pathname = usePathname();
   const [currentUrl, setCurrentUrl] = useState("");
-console.log(userProfile);
+  console.log(userProfile);
   const shareLink = () => {
-    if (pathname == `explore/:[id]` ) {
+    if (pathname == `explore/:[id]`) {
       setCurrentUrl(window.location.href);
-    } 
-    else {
+    } else {
       const originUrl = window.location.origin;
-      let url = originUrl.concat(`/explore`,`/${_id}`);
+      let url = originUrl.concat(`/explore`, `/${_id}`);
       console.log(window.location.origin);
 
       setCurrentUrl(url);
@@ -46,7 +45,7 @@ console.log(userProfile);
     navigator.clipboard.writeText(post.thought);
     setTimeout(() => setCopied(false), 3000);
   };
-const starLength = star.length;
+  const starLength = star.length;
 
   const addStar = async (id) => {
     try {
@@ -95,31 +94,28 @@ const starLength = star.length;
       <div className="feed_card">
         <div className="flex justify-between items-start gap-5">
           <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
-            {creator.profile?
-           <Image
-           src={`/${creator.profile.image}`}
-           alt="user_image"
-           width={40}
-           height={40}
-           className="rounded-full object-contain"
-         />:
-         <Skeleton className="h-12 w-12 rounded-full" />  
-          }
-           
-
+            {creator.profile ? (
+              <Image
+                src={`/${creator?.profile[0]?.image}`}
+                alt="user_image"
+                width={40}
+                height={40}
+                className="rounded-full object-contain"
+              />
+            ) : (
+              <Skeleton className="h-12 w-12 rounded-full" />
+            )}
             <div className="flex flex-col">
               <h3 className="font-satoshi font-semibold text-gray-900"></h3>
               <Link
-                href={`/profile/${creator?.profile?._id}`}
+                href={`/profile/${creator?.profile[0]?._id}`}
                 className="font-inter text-sm text-gray-100 hover:text-gray-300"
               >
-                {creator?.profile 
-                  ? creator?.profile?.quirkId
-                  : "Unknown User"}
+                {creator?.profile ? creator?.profile[0]?.quirkId : "Unknown User"}
               </Link>
             </div>
             {session?.user.id === creator.profile._id &&
-              pathName === "/profile" && (
+              pathname === "/profile" && (
                 <Button
                   variant="ghost"
                   className=" p-3 rounded-full gap-4 justify-end "
@@ -166,27 +162,48 @@ const starLength = star.length;
           )}
         </div>
 
+        {images?.map((image, index) => (
+        <div key={index}>
+          <div className="mt-4 relative w-[25rem] h-[25rem] overflow-hidden">
+            {image?.url && (
+              <Image
+                src={image?.url}
+                fill
+                className="absolute object-cover w-[30rem] h-[30rem]"
+                alt={""}
+                sizes={30}
+                priority={true}
+                
+              />
+            )}
+          </div>
+          <div>
+            
+          </div>
+        </div>
+      ))}
+
         <Separator className="my-4" />
         <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1  sm:space-x-4 text-sm text-[0.8rem]">
-        {star.some((starId) => starId === session?.user?.id) ? (
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => removeStar(session?.user?.id)}
-          >
-            <FaStar className="cursor-pointer" />
-            <p className="mx-1">{starLength}</p>
-          </Button>
-        ) : (
-          <Button
-            variant="ghost"
-            className="w-full"
-            onClick={() => addStar(session?.user?.id)}
-          >
-            <CiStar className="cursor-pointer" />
-            <p className="mx-1">{starLength}</p>
-          </Button>
-        )}
+          {star.some((starId) => starId === session?.user?.id) ? (
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={() => removeStar(session?.user?.id)}
+            >
+              <FaStar className="cursor-pointer" />
+              <p className="mx-1">{starLength}</p>
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              className="w-full"
+              onClick={() => addStar(session?.user?.id)}
+            >
+              <CiStar className="cursor-pointer" />
+              <p className="mx-1">{starLength}</p>
+            </Button>
+          )}
           <Separator orientation="vertical" />
           <Button
             variant="ghost"

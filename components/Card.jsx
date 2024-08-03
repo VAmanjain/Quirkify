@@ -12,6 +12,14 @@ import { Button } from "./ui/button";
 import ShareUrl from "./share";
 import { Skeleton } from "./ui/skeleton";
 
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+
 const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
   const [userProfile, setUserProfile] = useState(null);
   const { data: session } = useSession();
@@ -32,7 +40,7 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
 
   useEffect(() => {
     shareLink();
-    fetchUser();
+    // fetchUser();
   }, [pathname, post?._id, post.creator?._id]);
 
   const addStar = async (id) => {
@@ -67,29 +75,13 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
     setTimeout(() => setCopied(false), 3000);
   };
 
-  const fetchUser = async () => {
-    try {
-      const response = await fetch(
-        `/api/user-profile/${post.creator?._id}/user`
-      );
-      const data = await response.json();
-      setUserProfile(data);
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
-  };
-
   return (
     <div className="feed_card  w-[90%] mx-auto sm:w-full  ">
       <div className="flex justify-between items-start gap-5">
         <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
-          {userProfile?.UserProfiles ? (
+          {post?.creator?.profile[0]?.image ? (
             <Image
-              src={
-                userProfile.UserProfiles[0]?.image?.startsWith("/")
-                  ? userProfile.UserProfiles[0].image
-                  : `/${userProfile.UserProfiles[0].image}`
-              }
+              src={`/${post?.creator?.profile[0]?.image}`}
               alt="user_image"
               width={40}
               height={40}
@@ -99,14 +91,14 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
             <Skeleton className="h-[2.4rem] w-[2.4rem] rounded-full" />
           )}
           <div className="flex flex-col">
-            {userProfile?.UserProfiles ? (
+            {post?.creator?.profile[0] ? (
               <h3 className="font-satoshi font-medium">
                 <Link
-                  href={`/profile/${post.creator?._id}`}
+                  href={`/profile/${post?.creator?.profile[0]?.creator}`}
                   className="font-inter text-sm text-gray-100 hover:text-gray-300 "
                 >
-                  {userProfile?.UserProfiles?.length > 0
-                    ? userProfile.UserProfiles[0].quirkId
+                  {post?.creator?.profile[0]?.quirkId
+                    ? post?.creator?.profile[0]?.quirkId
                     : "Unknown User"}
                 </Link>
               </h3>
@@ -114,7 +106,8 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
               <Skeleton className="h-[1.4rem] w-[150px]" />
             )}
           </div>
-          {session?.user.id === post.creator?._id &&
+          {/* // delete button */}
+          {session?.user.id === post?.creator?.profile[0]?.creator &&
             pathname === "/profile" && (
               <Button
                 variant="ghost"
@@ -165,6 +158,31 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
           <Skeleton className="h-6 w-[250px]" />
         )}
       </div>
+      <div className="flex gap-3 overflow-hidden justify-center  ">
+        <Carousel className="w-[30rem] flex justify-center relative  ">
+          <CarouselContent className=" mt-4 w-full h-[30rem] gap-8 mx-auto -ml-4 ">
+            {post?.images?.map((image, index) => (
+              <CarouselItem className="w-[30rem] h-[30rem] pl-4 p-4 " key={index}>
+                <div className=" relative w-full h-full overflow-hidden rounded-md flex justify-center ">
+                  {image?.url && (
+                    <Image
+                      src={image?.url}
+                      fill
+                      className="absolute object-cover"
+                      alt={""}
+                      sizes={30}
+                      priority={true}
+                    />
+                  )}
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="absolute" />
+          <CarouselNext />
+        </Carousel>
+      </div>
+      {/* // opttions */}
       <Separator className="my-4" />
       <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1  sm:space-x-4 text-sm text-[0.8rem] ">
         {post?.star.some((starId) => starId === session?.user?.id) ? (

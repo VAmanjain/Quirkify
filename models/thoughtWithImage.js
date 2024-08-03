@@ -1,21 +1,21 @@
 import { Schema, model, models } from "mongoose";
-// import {User} from "@models/user"
 
-const ThoughtSchema = new Schema({
+const ThoughtWithImageSchema = new Schema({
   creator: {
     type: Schema.Types.ObjectId,
-    ref:'User'
+    ref: 'User',
+    required: true
   },
   thought: {
     type: String,
-    required: [true, "Thoughts is required"],
+    required: [true, "Thought is required"],
   },
   tag: [{
     type: String,
   }],
-  star:[{
-    type:Schema.Types.ObjectId,
-    ref:'User'
+  star: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
   }],
   images: [{
     public_id: {
@@ -31,8 +31,9 @@ const ThoughtSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-
 });
-const Thought = models.Thought || model("Thought", ThoughtSchema);
 
-export default Thought;
+
+const ThoughtWithImages = models.ThoughtWithImages || model("ThoughtWithImages", ThoughtWithImageSchema);
+
+export default ThoughtWithImages;

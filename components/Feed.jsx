@@ -5,7 +5,7 @@ import FilterCardList from "./FilterCardList";
 import ThoughtCardList from "./ThoughtCardList";
 import { Input } from "./ui/input";
 
-const Feed = () => {
+const  Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
   const [filterProfile, setFilterProfile] = useState([]);
@@ -52,12 +52,10 @@ const Feed = () => {
   const fetchPosts = async () => {
     const response = await fetch("/api/thought", { cache: "no-store" });
     const data = await response.json();
-    const sortedPosts = await data.sort(
-      (a, b) => new Date(b.createAt) - new Date(a.createAt)
-    );
-    setPosts(sortedPosts);
+    setPosts(data);
   };
 
+  // console.log(filterProfile);
  
 
   return (

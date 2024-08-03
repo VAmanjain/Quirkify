@@ -1,115 +1,86 @@
-// 'use client'
-// import {useEffect, useState} from 'react'
-// import { useSession } from 'next-auth/react'
-// import { useRouter } from 'next/navigation'
-// import From from "@components/Form"
-// const CreatePost = () => {
-//     const router = useRouter();
-//     const {data: session, status}= useSession();
-//     const [submitting, setSubmitting] = useState(false);
-//     const [post, setPost] = useState({
-//         thought:"",
-//         tag:"",
-//     })
+"use client";
 
-//     useEffect(() => {
-//         if (status === "unauthenticated") {
-//           router.replace("/");
-//         }
-//       }, [status, session, router]);
-
-
-//     const createPost = async(e)=>{
-//         e.preventDefault();
-//         setSubmitting(true);
-        
-//         try {
-
-
-//             // const tag = post.tag.startsWith('#') ? post.tag.slice(1) : post.tag;
-
-//             const response = await fetch ('api/thought/new', {
-//                 method:"POST", body:JSON.stringify({
-//                     thought:post.thought,
-//                     userId: session?.user.id,
-//                     tag:post.tag,
-//                 })
-//             })
-
-//             if(response.ok){
-//                 router.push('/explore');
-//             }
-//         } catch (error) {
-//             console.log(error);
-//         }
-//         finally{
-//             setSubmitting(false);
-//         }
-//     }
-
-//   return (
-//     <>
-//     <From
-//     type="Create"
-//     post={post}
-//     setPost={setPost}
-//     submitting={submitting}
-//     handlesubmit={createPost}
-//     />
-//     </>
-//   )
-// }
-
-// export default CreatePost
-
-
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import Form from "@components/Form"
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Form from "@components/Form";
 
 const CreatePost = () => {
-  const router = useRouter()
-  const { data: session, status } = useSession()
-  const [submitting, setSubmitting] = useState(false)
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({
     thought: "",
     tag: "",
-  })
+  });
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.replace("/")
+      router.replace("/");
     }
-  }, [status, session, router])
+  }, [status, session, router]);
 
   const createPost = async (e) => {
-    e.preventDefault()
-    setSubmitting(true)
-
+    e.preventDefault();
+    setSubmitting(true);
     try {
-      const tag = post.tag.startsWith('#') ? post.tag.slice(1) : post.tag
-
-      const response = await fetch('api/thought/new', {
+      const tag = post.tag.startsWith("#") ? post.tag.slice(1) : post.tag;
+      const response = await fetch("api/thought/new", {
         method: "POST",
         body: JSON.stringify({
           thought: post.thought,
           userId: session?.user.id,
           tag: tag,
+          images:uploadedImages,
         }),
-      })
-
+      });
       if (response.ok) {
-        router.push('/explore')
+        router.push("/explore");
       }
     } catch (error) {
-      console.error("Error creating post:", error)
+      console.error("Error creating post:", error);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
+
+  const [uploadedImages, setUploadedImages] = useState([]); // Initialize as an empty array
+
+  const handleImageControl = (result) => {
+    // Log the result of the upload
+    console.log("Upload Result: ", result);
+
+    if (result && result.event === "success") {
+      const newImage = {
+        public_id: result.info.public_id,
+        url: result.info.secure_url,
+      };
+
+      setUploadedImages((prevImages) => [...prevImages, newImage]); // Add new image object to the state
+    }
+
+    console.log("Uploaded Images: ", uploadedImages);
+  };
+
+  const removeImage = async (publicId) => {
+    try {
+      const res = await fetch("/api/removeImage", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ publicId }),
+      });
+
+      if (res.ok) {
+        // Remove the image from the uploadedImages state
+        setUploadedImages((prevImages) => prevImages.filter(image => image.public_id !== publicId));
+        console.log("remove successfully");
+      }
+
+    } catch (error) {
+      console.error("Error removing image:", error);
+    }
+  };
+
 
   return (
     <>
@@ -119,10 +90,12 @@ const CreatePost = () => {
         setPost={setPost}
         submitting={submitting}
         handleSubmit={createPost}
-      
+        removeImage={removeImage}
+        handleImageControl={handleImageControl}
+        uploadedImages={uploadedImages}
       />
     </>
-  )
-}
+  );
+};
 
-export default CreatePost
+export default CreatePost;

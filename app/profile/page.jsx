@@ -11,51 +11,21 @@ const MyProfile = () => {
   const [userProfile, setUserProfile] = useState(null);
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [interval, setInterval] = useState("");
+  // const [interval, setInterval] = useState("");
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/");
     }
   }, [status, session, router]);
 
-  // useEffect(() => {
-  //   const handleAuthentication = async () => {
-  //     if (status === "unauthenticated") {
-  //       router.replace("/");
-  //     } else if (status === "authenticated" && session?.user) {
-  //       const storedSessionId = localStorage.getItem("sessionId");
-  //       if (storedSessionId) {
-  //         await fetchData(storedSessionId);
-  //       } else {
-  //         localStorage.setItem("sessionId", session.user.id);
-  //         await fetchData(session.user.id);
-  //       }
-  //     }
-  //   };
-
-  //  setInterval(handleAuthentication, 3000);
-
-  //   return () => clearInterval(interval);
-  // }, [status, session, router]);
-
-  const fetchUserData = () => {
+  const fetchUserData = async () => {
     if (session?.user?.id) {
-      fetchData(session?.user?.id); // Initial data fetch
+      await fetchData(session?.user?.id); // Initial data fetch
     }
   };
   useEffect(() => {
     fetchUserData();
   }, [session?.user?.id]);
-
-  // useEffect(() => {
-  //   const handleGetProfile = async ()=>{
-  //   if (session?.user?.id) {
-  //     await fetchData(session.user.id);
-  //   }}
-  //   setInterval(handleGetProfile, 3000);
-
-  //   return () => clearInterval(interval);
-  // }, []);
 
   const fetchData = async (sessionId) => {
     try {
@@ -74,19 +44,38 @@ const MyProfile = () => {
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchData();
-    }, 5000);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     fetchData(session?.creator?._id);
+  //   }, 5000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(1000);
+  // }, []);
+
+  const removeImage = async (publicIds) => {
+    try {
+      const res = await fetch("/api/removeImage", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ publicId: publicIds }),
+      });
+
+      if (res.ok) {
+        // Remove the image from the uploadedImages state
+
+        console.log("remove successfully");
+      }
+    } catch (error) {
+      console.error("Error removing image:", error);
+    }
+  };
 
   const handleDelete = async (post) => {
     const hasConfirmed = confirm("Are you sure? you want to delete this post?");
-
     if (hasConfirmed) {
       try {
+        const publicIds = post.images.map((image) => image.public_id);
+        await removeImage(publicIds); // Corrected to access public_id properly
         await fetch(`api/thought/${post._id.toString()}`, {
           method: "DELETE",
         });

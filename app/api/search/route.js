@@ -23,10 +23,8 @@ export const GET = async (request) => {
       UserProfiles = await Thought.aggregate([
         // Match with tag
         { $match: { tag: { $regex: `^${tag}`, $options: "i" } } },
-
         // Sort descendingly with createAt
         { $sort: { createAt: -1 } },
-
         // Left Join with User model (ref a creator in thoughts model)
         {
           $lookup: {
@@ -36,7 +34,6 @@ export const GET = async (request) => {
             as: "creator",
           },
         },
-
         // Left Join with UserProfile with the creator._id
         {
           $lookup: {
@@ -46,13 +43,6 @@ export const GET = async (request) => {
             as: "creator.profile",
           },
         },
-
-        // Unwind the creator array
-        { $unwind: "$creator" },
-
-        // Unwind the creator.profile array
-        { $unwind: "$creator.profile" },
-
         // Project the desired fields
         {
           $project: {
@@ -62,6 +52,7 @@ export const GET = async (request) => {
             tag: 1,
             star: 1,
             createAt: 1,
+            images:1,
           },
         },
       ]);

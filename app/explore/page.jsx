@@ -1,9 +1,11 @@
 "use client";
 
 import Feed from "@components/Feed";
+
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const Landing = () => {
   const router = useRouter();
@@ -23,6 +25,7 @@ const Landing = () => {
       fetchUser(session.user.id);
     }
   }, [session]);
+
 
   const fetchUser = async (sessionId) => {
     try {

@@ -3,7 +3,7 @@
 import ThoughtCard from "./Card";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { EditProfile } from "./EditProfile";
 import ShareUrl from "./share";
@@ -15,7 +15,6 @@ const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
   const [currentUrl, setCurrentUrl] = useState("");
   const pathname = usePathname();
   console.log(pathname);
-
   const shareLink = () => {
     if (pathname !== "/profile") {
       setCurrentUrl(window.location.href);
@@ -33,12 +32,13 @@ const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
   return (
     <section className="max-w-[768px] w-full mx-auto">
       <h1 className="w-full flex justify-center mb-3  ">
-        {userProfile?
-        <span className="text-3xl font-semibold  ">
-          {userProfile?.quirkId}'s Profile
-        </span>:
-        <Skeleton className="text-3xl font-semibold h-8 w-[200px] sm:w-[250px] "/>
-        }
+        {userProfile ? (
+          <span className="text-3xl font-semibold  ">
+            {userProfile?.quirkId}'s Profile
+          </span>
+        ) : (
+          <Skeleton className="text-3xl font-semibold h-8 w-[200px] sm:w-[250px] " />
+        )}
       </h1>
       <div className=" w-full flex justify-center my-2 ">
         {userProfile ? (
@@ -54,6 +54,7 @@ const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
             width={100}
             height={100}
             className="rounded-full object-contain w-[10rem] "
+            priority={true}
           />
         ) : (
           <Skeleton className="h-[10rem] w-[10rem] rounded-full" />
@@ -61,12 +62,11 @@ const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
       </div>
 
       <div className="mt-5 text-[1.2rem] text-center   ">
-        {userProfile?
-        
-        <p> {userProfile?.bio}</p>:
-        <Skeleton className=" mt-5 text-[1.2rem] mx-auto text-center h-7 w-[250px] sm:w-[350px]" />
-
-      }
+        {userProfile ? (
+          <p> {userProfile?.bio}</p>
+        ) : (
+          <Skeleton className=" mt-5 text-[1.2rem] mx-auto text-center h-7 w-[250px] sm:w-[350px]" />
+        )}
       </div>
       <div className="grid grid-flow-col mt-2 gap-4 p-2 ">
         {session?.user?.id &&

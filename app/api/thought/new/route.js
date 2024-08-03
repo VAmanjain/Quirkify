@@ -1,21 +1,23 @@
 // import { connectToDB } from "@utils/database";
-// import Thought from "@models/thought";
+import Thought from "@models/thought";
 
 // export const POST = async (req) => {
 //   const { userId, thought, tag } = await req.json();
 
 //   try {
-//    await connectToDB();
-//    const tagArray = tag.split("#").filter(item => item !== '').filter(item => !item.includes("#"));
+//     await connectToDB();
+//     console.log(tag)
+  
+//     // Split the tag string into an array of tags
+//     const tagArray = tag.split("#").filter(item => item !== '').filter(item => !item.includes("#"));
 
-//    // Filter out elements containing #
-//    // let filteredList = list.filter(item => !item.includes("#"));
-   
-//    console.log(tagArray);
+//     console.log(tagArray);
+
 //     const newThought = new Thought({
 //       creator: userId,
 //       thought,
-//       tagArray,
+//       tag:tagArray, 
+      
 //     });
 
 //     await newThought.save();
@@ -27,22 +29,28 @@
 // };
 
 import { connectToDB } from "@utils/database";
-import Thought from "@models/thought";
+// import ThoughtWithImages from "@models/thoughtWithImage";
 
 export const POST = async (req) => {
-  const { userId, thought, tag } = await req.json();
+  const { userId, thought, tag, images } = await req.json();
 
   try {
     await connectToDB();
-    
-  
+    console.log(tag);
+    console.log(images);
+
     // Split the tag string into an array of tags
-    const tagArray = tag.split("#").filter(item => item !== '').filter(item => !item.includes("#"));
+    const tagArray = tag
+      .split("#")
+      .filter((item) => item !== "")
+      .filter((item) => !item.includes("#"));
+    console.log(tagArray);
 
     const newThought = new Thought({
       creator: userId,
       thought,
-      tag:tagArray, // Assign the tagArray to the tag field of the Thought model
+      tag: tagArray,
+      images:images, // Assign the tagArray to the tag field of the Thought model
     });
 
     await newThought.save();
