@@ -5,13 +5,14 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 import Profile from "@components/Profile";
+import Loader from "@components/Loader";
 
 const MyProfile = () => {
   const [posts, setPosts] = useState([]);
   const [userProfile, setUserProfile] = useState(null);
   const router = useRouter();
   const { data: session, status } = useSession();
-  // const [interval, setInterval] = useState("");
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/");
@@ -39,18 +40,11 @@ const MyProfile = () => {
 
       setPosts(postsData);
       setUserProfile(userData.UserProfiles?.[0] || null);
+      setLoading(false)
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     fetchData(session?.creator?._id);
-  //   }, 5000);
-
-  //   return () => clearInterval(1000);
-  // }, []);
 
   const removeImage = async (publicIds) => {
     try {
@@ -86,14 +80,16 @@ const MyProfile = () => {
     }
   };
 
-  return (
+  return (<>
+    {loading ? <Loader/> :
     <Profile
-      userProfile={userProfile}
-      desc="Welcome to your personalized profile"
-      data={posts}
-      handleDelete={handleDelete}
-      fetchPosts={fetchUserData}
-    />
+    userProfile={userProfile}
+    desc="Welcome to your personalized profile"
+    data={posts}
+    handleDelete={handleDelete}
+    fetchPosts={fetchUserData}
+    />}
+    </>
   );
 };
 

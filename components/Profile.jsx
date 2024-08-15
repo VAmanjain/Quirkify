@@ -3,8 +3,6 @@
 import ThoughtCard from "./Card";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { EditProfile } from "./EditProfile";
 import ShareUrl from "./share";
 import { Separator } from "./ui/separator";
@@ -12,22 +10,6 @@ import { Skeleton } from "./ui/skeleton";
 
 const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
   const { data: session } = useSession();
-  const [currentUrl, setCurrentUrl] = useState("");
-  const pathname = usePathname();
-  console.log(pathname);
-  const shareLink = () => {
-    if (pathname !== "/profile") {
-      setCurrentUrl(window.location.href);
-    } else {
-      const originUrl = window.location.href;
-      const url = originUrl.concat(`/${userProfile?.creator?._id}`);
-      setCurrentUrl(url);
-    }
-  };
-
-  useEffect(() => {
-    shareLink();
-  }, [pathname, userProfile]);
 
   return (
     <section className="max-w-[768px] w-full mx-auto">
@@ -71,10 +53,11 @@ const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
       <div className="grid grid-flow-col mt-2 gap-4 p-2 ">
         {session?.user?.id &&
           session?.user?.id === userProfile?.creator?._id && <EditProfile />}
-        <ShareUrl link={currentUrl} />
+        <ShareUrl link={`${process.env.NEXT_PUBLIC_BASE_URI}/profile/${userProfile?.creator?._id}`} />
       </div>
       <Separator className="my-4" />
       <div className="mt-16 feed_layout">
+        
         {data.map((post) => (
           <ThoughtCard
             key={post._id}

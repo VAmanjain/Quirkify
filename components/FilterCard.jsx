@@ -8,34 +8,19 @@ import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import ShareUrl from "./share";
 import { usePathname } from "next/navigation";
+import SwiperImage from "./SwiperImage";
+import { Skeleton } from "./ui/skeleton";
+import { addStar, removeStar } from "@controllers/Star";
 
 const FilterCard = ({
   userProfile,
   fetchQuery,
   setSearchText,
-  handleTagClick,
 }) => {
   const { creator, _id, thought, tag, star, images } = userProfile;
   const { data: session } = useSession();
   const [copied, setCopied] = useState("");
   const pathname = usePathname();
-  const [currentUrl, setCurrentUrl] = useState("");
-  console.log(userProfile);
-  const shareLink = () => {
-    if (pathname == `explore/:[id]`) {
-      setCurrentUrl(window.location.href);
-    } else {
-      const originUrl = window.location.origin;
-      let url = originUrl.concat(`/explore`, `/${_id}`);
-      console.log(window.location.origin);
-
-      setCurrentUrl(url);
-    }
-  };
-
-  useEffect(() => {
-    shareLink();
-  }, [pathname, _id]);
 
   // Ensure tag is an array
   const tagsArray = Array.isArray(tag) ? tag : [tag];
@@ -45,49 +30,6 @@ const FilterCard = ({
     navigator.clipboard.writeText(post.thought);
     setTimeout(() => setCopied(false), 3000);
   };
-  const starLength = star.length;
-
-  const addStar = async (id) => {
-    try {
-      await fetch(
-        `api/star-thought/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            thoughtId: _id,
-          }),
-        },
-        { cache: "no-store" }
-      );
-      fetchQuery();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const removeStar = async (id) => {
-    try {
-      await fetch(
-        `api/unstar-thought/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            thoughtId: _id,
-          }),
-        },
-        { cache: "no-store" }
-      );
-      fetchQuery();
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   return (
     <>
@@ -96,7 +38,7 @@ const FilterCard = ({
           <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
             {creator.profile ? (
               <Image
-                src={`/${creator?.profile[0]?.image}`}
+                src={`/${creator?.profile?.image}`}
                 alt="user_image"
                 width={40}
                 height={40}
@@ -108,13 +50,13 @@ const FilterCard = ({
             <div className="flex flex-col">
               <h3 className="font-satoshi font-semibold text-gray-900"></h3>
               <Link
-                href={`/profile/${creator?.profile[0]?._id}`}
+                href={`/profile/${creator?.profile?._id}`}
                 className="font-inter text-sm text-gray-100 hover:text-gray-300"
               >
-                {creator?.profile ? creator?.profile[0]?.quirkId : "Unknown User"}
+                {creator?.profile ? creator?.profile?.quirkId : "Unknown User"}
               </Link>
             </div>
-            {session?.user.id === creator.profile._id &&
+            {session?.user.id === creator.profile?._id &&
               pathname === "/profile" && (
                 <Button
                   variant="ghost"
@@ -161,27 +103,11 @@ const FilterCard = ({
             ""
           )}
         </div>
-
-        {images?.map((image, index) => (
-        <div key={index}>
-          <div className="mt-4 relative w-[25rem] h-[25rem] overflow-hidden">
-            {image?.url && (
-              <Image
-                src={image?.url}
-                fill
-                className="absolute object-cover w-[30rem] h-[30rem]"
-                alt={""}
-                sizes={30}
-                priority={true}
-                
-              />
-            )}
-          </div>
-          <div>
-            
-          </div>
-        </div>
-      ))}
+<div className="flex gap-3 overflow-hidden justify-center  ">
+       {
+       images?.length > 0 && 
+       <SwiperImage postImage={images} />}
+      </div>
 
         <Separator className="my-4" />
         <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1  sm:space-x-4 text-sm text-[0.8rem]">
@@ -189,19 +115,23 @@ const FilterCard = ({
             <Button
               variant="ghost"
               className="w-full"
-              onClick={() => removeStar(session?.user?.id)}
+              onClick={() => {
+                removeStar({ id: session?.user?.id, thoughtId: _id,fetchData: fetchQuery });
+              }}
             >
               <FaStar className="cursor-pointer" />
-              <p className="mx-1">{starLength}</p>
+              <p className="mx-1">{star.length}</p>
             </Button>
           ) : (
             <Button
               variant="ghost"
               className="w-full"
-              onClick={() => addStar(session?.user?.id)}
+              onClick={() => {
+                addStar({ id: session?.user?.id, thoughtId: _id,fetchData: fetchQuery });
+              }}
             >
               <CiStar className="cursor-pointer" />
-              <p className="mx-1">{starLength}</p>
+              <p className="mx-1">{star.length}</p>
             </Button>
           )}
           <Separator orientation="vertical" />
@@ -224,8 +154,7 @@ const FilterCard = ({
             Copy
           </Button>
           <Separator orientation="vertical" />
-
-          <ShareUrl link={currentUrl} />
+          <ShareUrl link={`${process.env.NEXT_PUBLIC_BASE_URI}/explore/${_id}`} />
         </div>
       </div>
     </>

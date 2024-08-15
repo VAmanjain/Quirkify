@@ -9,6 +9,7 @@ import { IoReload } from "react-icons/io5";
 import { useState } from "react";
 import { CldUploadButton } from "next-cloudinary";
 import Image from "next/image";
+import SwiperImage from "./SwiperImage";
 
 const Form = ({
   type,
@@ -20,6 +21,7 @@ const Form = ({
   removeImage,
   uploadedImages,
 }) => {
+
   return (
     <section className=" flex-start flex-col max-w-[620px] mx-auto border-[2px] border-white rounded-lg px-6 py-10 ">
       <h1 className="head_text text-left">
@@ -33,14 +35,14 @@ const Form = ({
       >
         <div className="grid w-full gap-1.5">
           <Label htmlFor="message-2" className="mb-2">
-            Write Your Thougt
+            Write Your Thoughts
           </Label>
           <Textarea
-            placeholder="Type your message here"
+            placeholder="Type your thoughts here"
             id="message-2"
             value={post.thought}
             onChange={(e) => setPost({ ...post, thought: e.target.value })}
-            required
+            // required
           />
         </div>
 
@@ -56,79 +58,57 @@ const Form = ({
             placeholder=" #Quirky"
             value={post.tag}
             onChange={(e) => setPost({ ...post, tag: e.target.value })}
-            required
+            // required
           />
         </div>
-        <div className="mt-6 flex items-center justify-end gap-x-6">
-          <Link href="/explore">
-            <Button variant="destructive" className=" rounded-full">
-              Cancel
-            </Button>
-          </Link>
-          {submitting ? (
-            <Button disabled className="rounded-full ">
-              <IoReload className="mr-2 h-4 w-4 animate-spin " />
-              {type}...
-            </Button>
-          ) : (
-            <Button variant="outline" type="submit" className="rounded-full ">
-              {type}
-            </Button>
-          )}
-        </div>
-        <CldUploadButton
-          uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-          options={{sources: ['local', 'url', 'unsplash']}}
-          onUpload={handleImageControl} // Use onUpload instead of onClick
-        >
-          Upload..
-        </CldUploadButton>
+        <div className="mt-6 flex items-center justify-between gap-x-6">
+          <div>
+            <CldUploadButton
+              uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+              options={{ sources: ["local", "url", "unsplash"] }}
+              onUpload={handleImageControl} // Use onUpload instead of onClick
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                />
+              </svg>
+            </CldUploadButton>
+          </div>
 
-        {uploadedImages.map((image, index) => (
-  <div key={index}>
-    <div className="mt-4 relative w-[25rem] h-[25rem] overflow-hidden">
-      {image?.url && (
-        <Image
-          src={image?.url}
-          fill
-          className="absolute object-cover w-[30rem] h-[30rem]"
-          alt={""}
-        />
-      )}
-    </div>
-    <div>
-      {image?.public_id && (
-        <button
-          onClick={() => removeImage(image?.public_id)}
-          className="py-2 px-4 rounded-full text-black bg-white"
-          type="button"
-        >
-          Remove
-        </button>
-      )}
-    </div>
-  </div>
-))}
-        {/* <div className="mt-4 relative w-[25rem] h-[25rem] overflow-hidden  ">
-            {uploadedImages?.url && (
-              <Image
-                src={uploadedImages?.url}
-                fill
-                className="absolute object-cover w-[30rem] h-[30rem] "
-                alt={""}
-              />
+          <div className="flex gap-3">
+            <Link href="/explore">
+              <Button variant="destructive" className=" rounded-full">
+                Cancel
+              </Button>
+            </Link>
+            {submitting ? (
+              <Button disabled className="rounded-full ">
+                <IoReload className="mr-2 h-4 w-4 animate-spin " />
+                {type}...
+              </Button>
+            ) : (
+              <Button variant="outline" type="submit" className="rounded-full px-6 text-md ">
+                {type} 
+              </Button>
             )}
           </div>
-          <div>
-            {uploadedImages?.public_id && (
-              <button
-                onClick={removeImage(uploadedImages?.public_id)}
-                className="py-2 px-4 rounded-full text-black bg-white "
-              >
-                Remove
-              </button>
-            )}
-          </div> */}
+        </div>
+        <div className="  flex gap-3 overflow-hidden justify-center ">
+          {/* <SwiperImage postImage={uploadedImages} removeImage={removeImage} /> */}
+          {uploadedImages.length > 0 && (
+  <SwiperImage postImage={uploadedImages} removeImage={removeImage} />
+)}
+        </div>
       </form>
     </section>
   );

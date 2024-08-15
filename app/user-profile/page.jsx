@@ -14,17 +14,10 @@ import { IoReload } from "react-icons/io5";
 
 const UserProfile = () => {
   const [selectedAvatar, setSelectedAvatar] = useState(null);
-  const [userInfo, setUserInfo] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
   const { data: session, status } = useSession();
-
-  useEffect(() => {
-    setTimeout(() => {
-      window.location.reload();
-    }, 300000);
-  }, []);
 
   useEffect(() => {
     redirectToPage(status, session, router)

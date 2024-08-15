@@ -12,7 +12,6 @@ import {
 import { UserCircleIcon } from "@heroicons/react/24/solid";
 import AvatarPicker from "@./components/AvatarPicker";
 import { useEffect, useState } from "react";
-import { redirectToPage } from "@utils/pageProtect";
 import { Label } from "@components/ui/label";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";

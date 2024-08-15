@@ -6,6 +6,7 @@ export const GET = async (request) => {
   try {
     await connectToDB();
 
+    // ------------ Checking search type
     const query = request.nextUrl.searchParams.get("query");
     const tag = request.nextUrl.searchParams.get("tag");
     const quirkId = request.nextUrl.searchParams.get("quirkId");
@@ -34,6 +35,11 @@ export const GET = async (request) => {
             as: "creator",
           },
         },
+
+        
+        
+        
+
         // Left Join with UserProfile with the creator._id
         {
           $lookup: {
@@ -43,6 +49,9 @@ export const GET = async (request) => {
             as: "creator.profile",
           },
         },
+
+        { $unwind: "$creator.profile" },
+
         // Project the desired fields
         {
           $project: {
@@ -52,7 +61,7 @@ export const GET = async (request) => {
             tag: 1,
             star: 1,
             createAt: 1,
-            images:1,
+            images: 1,
           },
         },
       ]);
@@ -106,6 +115,7 @@ export const GET = async (request) => {
               updateAt: "$updateAt",
             },
             thought: "$thoughts.thought",
+            images: "$thoughts.images",
             tag: "$thoughts.tag",
             star: "$thoughts.star",
             createAt: "$thoughts.createAt",
@@ -161,6 +171,7 @@ export const GET = async (request) => {
               updateAt: "$updateAt",
             },
             thought: "$thoughts.thought",
+            images: "$thoughts.images",
             tag: "$thoughts.tag",
             star: "$thoughts.star",
             createAt: "$thoughts.createAt",

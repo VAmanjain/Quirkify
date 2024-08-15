@@ -8,33 +8,14 @@ import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { FaStar } from "react-icons/fa";
 import { CiStar } from "react-icons/ci";
-// import { Link } from "next/link";
 import ShareUrl from "./share";
 import Link from "next/link";
+import SwiperImage from "./SwiperImage";
 
 const ViewCard = ({ thought, fetchThought }) => {
-  const [userProfile, setUserProfile] = useState([]);
-  const [main, setMain] = useState("");
   const { data: session } = useSession();
-  const starLength = thought[0]?.star?.length;
   const [copied, setCopied] = useState("");
   const pathname = usePathname();
-  const [currentUrl, setCurrentUrl] = useState("");
-
-  const shareLink = () => {
-    if (pathname !== "/explore" || "/profile" || "profile/:[id]") {
-      setCurrentUrl(window.location.href);
-    } else {
-      const originUrl = window.location.href;
-      const url = originUrl.concat(`/${thought._id}`);
-      setCurrentUrl(url);
-    }
-  };
-
-  console.log(thought);
-  useEffect(() => {
-    shareLink();
-  }, [pathname, thought]);
 
   const addStar = async (id) => {
     await fetch(`/api/star-thought/${id}`, {
@@ -43,7 +24,7 @@ const ViewCard = ({ thought, fetchThought }) => {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        thoughtId: thought[0]?._id,
+        thoughtId: thought?._id,
       }),
     });
     fetchThought();
@@ -56,7 +37,7 @@ const ViewCard = ({ thought, fetchThought }) => {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        thoughtId: thought[0]?._id,
+        thoughtId: thought?._id,
       }),
     });
     fetchThought();
@@ -68,41 +49,16 @@ const ViewCard = ({ thought, fetchThought }) => {
     setTimeout(() => setCopied(false), 3000);
   };
 
-  const fetchUser = async () => {
-    try {
-      if (thought?.creator && thought?.creator?._id) {
-        const response = await fetch(
-          `/api/user-profile/${thought.creator._id}/user`
-        );
-        const data = await response.json();
-        console.log(data);
-        console.log(response);
-        setUserProfile(data);
-        console.log(userProfile);
-      } else {
-        setUserProfile(null);
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    }
-  };
 
-  useEffect(() => {
-    fetchUser();
-    setMain("aman");
-    console.log(main);
-  }, [thought?.creator?._id]);
-
-  console.log(thought[0]?.creator?.profile[0]?.creator);
 
   return (
     <div>
       <div className="feed_card w-[90%] mx-auto sm:w-full">
         <div className="flex justify-between items-start gap-5">
           <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
-            {thought[0]?.creator?.profile ? (
+            {thought?.creator?.profile ? (
               <Image
-                src={`/${thought[0]?.creator?.profile[0]?.image}`}
+                src={`/${thought?.creator?.profile[0]?.image}`}
                 alt="user_image"
                 width={40}
                 height={40}
@@ -112,19 +68,18 @@ const ViewCard = ({ thought, fetchThought }) => {
               <Skeleton className="h-12 w-12 rounded-full" />
             )}
             <div className="flex flex-col">
-              {thought[0]?.creator?.profile ? (
+              {thought?.creator?.profile ? (
                 <Link
-                  href={`/profile/${thought[0]?.creator?.profile[0]?.creator}`}
+                  href={`/profile/${thought?.creator?.profile[0]?.creator}`}
                   className="font-inter text-sm text-gray-100 hover:text-gray-300"
                 >
                   <h3 className="font-satoshi font-medium">
-                    {thought[0]?.creator?.profile[0]?.quirkId}
+                    {thought?.creator?.profile[0]?.quirkId}
                   </h3>
                 </Link>
               ) : (
                 <Skeleton className="h-6 w-[150px]" />
               )}
-             
             </div>
             {session?.user.id === thought?.creator?._id &&
               pathname === "/profile" && (
@@ -157,14 +112,14 @@ const ViewCard = ({ thought, fetchThought }) => {
         </div>
         {thought ? (
           <p className="my-4 font-satoshi text-sm text-gray-300">
-            {thought[0]?.thought}
+            {thought?.thought}
           </p>
         ) : (
           <Skeleton className="h-6 w-[250px]" />
         )}
         <div className="flex">
-          {thought[0]?.tag ? (
-            thought[0]?.tag?.map((tag, index) => (
+          {thought?.tag ? (
+            thought?.tag?.map((tag, index) => (
               <p
                 className="font-inter mx-1 text-blue-500 text-sm blue_gradient cursor-pointer"
                 onClick={() => setSearchText(`#${tag}`)}
@@ -178,30 +133,14 @@ const ViewCard = ({ thought, fetchThought }) => {
           )}
         </div>
 
-        <div>
-        {thought[0]?.images?.map((image, index) => (
-        <div key={index}>
-          <div className="mt-4 relative w-[25rem] h-[25rem] overflow-hidden">
-            {image?.url && (
-              <Image
-                src={image?.url}
-                fill
-                className="absolute object-cover w-[30rem] h-[30rem]"
-                alt={""}
-              />
-            )}
-          </div>
-          <div>
-            
-          </div>
-        </div>
-      ))}
+        <div className="flex gap-3 overflow-hidden justify-center  ">
+          <SwiperImage postImage={thought?.images} />
         </div>
 
-{/* // buttons */}
+        {/* // buttons */}
         <Separator className="my-4" />
         <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1 sm:space-x-4 text-sm text-[0.8rem]">
-          {thought[0]?.star?.some((starId) => starId === session?.user?.id) ? (
+          {thought?.star?.some((starId) => starId === session?.user?.id) ? (
             <Button
               variant="ghost"
               className="w-full"
@@ -210,7 +149,7 @@ const ViewCard = ({ thought, fetchThought }) => {
               }}
             >
               <FaStar className="cursor-pointer" />
-              <p className="mx-1">{starLength}</p>
+              <p className="mx-1">{thought?.star?.length}</p>
             </Button>
           ) : (
             <Button
@@ -219,7 +158,7 @@ const ViewCard = ({ thought, fetchThought }) => {
               onClick={() => addStar(session?.user?.id)}
             >
               <CiStar className="cursor-pointer" />
-              <p className="mx-1">{starLength}</p>
+              <p className="mx-1">{thought?.star?.length}</p>
             </Button>
           )}
           <Separator orientation="vertical" />
@@ -242,7 +181,9 @@ const ViewCard = ({ thought, fetchThought }) => {
             Copy
           </Button>
           <Separator orientation="vertical" />
-          <ShareUrl link={currentUrl} />
+          <ShareUrl
+            link={`${process.env.NEXT_PUBLIC_BASE_URI}/explore/${thought?._id}`}
+          />
         </div>
       </div>
     </div>

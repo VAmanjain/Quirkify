@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
@@ -11,63 +11,13 @@ import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import ShareUrl from "./share";
 import { Skeleton } from "./ui/skeleton";
-
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import SwiperImage from "./SwiperImage";
+import { addStar, removeStar } from "@controllers/Star";
 
 const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
-  const [userProfile, setUserProfile] = useState(null);
   const { data: session } = useSession();
   const [copied, setCopied] = useState("");
-  const starLength = post?.star.length;
   const pathname = usePathname();
-  const [currentUrl, setCurrentUrl] = useState("");
-
-  const shareLink = () => {
-    if (pathname == `explore/:[id]`) {
-      setCurrentUrl(window.location.href);
-    } else {
-      const originUrl = window.location.origin;
-      let url = originUrl.concat(`/explore`, `/${post._id}`);
-      setCurrentUrl(url);
-    }
-  };
-
-  useEffect(() => {
-    shareLink();
-    // fetchUser();
-  }, [pathname, post?._id, post.creator?._id]);
-
-  const addStar = async (id) => {
-    await fetch(`api/star-thought/${id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        thoughtId: post._id,
-      }),
-    });
-    fetchPosts();
-  };
-
-  const removeStar = async (id) => {
-    await fetch(`api/unstar-thought/${id}`, {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        thoughtId: post._id,
-      }),
-    });
-    fetchPosts();
-  };
 
   const handleCopy = () => {
     setCopied(post.thought);
@@ -76,6 +26,8 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
   };
 
   return (
+    <>
+    
     <div className="feed_card  w-[90%] mx-auto sm:w-full  ">
       <div className="flex justify-between items-start gap-5">
         <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
@@ -158,30 +110,11 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
           <Skeleton className="h-6 w-[250px]" />
         )}
       </div>
+
       <div className="flex gap-3 overflow-hidden justify-center  ">
-        <Carousel className="w-[30rem] flex justify-center relative  ">
-          <CarouselContent className=" mt-4 w-full h-[30rem] gap-8 mx-auto -ml-4 ">
-            {post?.images?.map((image, index) => (
-              <CarouselItem className="w-[30rem] h-[30rem] pl-4 p-4 " key={index}>
-                <div className=" relative w-full h-full overflow-hidden rounded-md flex justify-center ">
-                  {image?.url && (
-                    <Image
-                      src={image?.url}
-                      fill
-                      className="absolute object-cover"
-                      alt={""}
-                      sizes={30}
-                      priority={true}
-                    />
-                  )}
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="absolute" />
-          <CarouselNext />
-        </Carousel>
+        {post?.images?.length > 0 && <SwiperImage postImage={post?.images} />}
       </div>
+
       {/* // opttions */}
       <Separator className="my-4" />
       <div className="w-full my-2 flex h-5 items-center justify-evenly space-x-1  sm:space-x-4 text-sm text-[0.8rem] ">
@@ -190,20 +123,22 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
             variant="ghost"
             className="w-full"
             onClick={() => {
-              removeStar(session?.user?.id);
+              removeStar({ id: session?.user?.id, thoughtId: post._id,fetchData: fetchPosts });
             }}
           >
             <FaStar className="cursor-pointer " />
-            <p className="mx-1">{starLength}</p>
+            <p className="mx-1">{post?.star.length}</p>
           </Button>
         ) : (
           <Button
             variant="ghost"
             className="w-full"
-            onClick={() => addStar(session?.user?.id)}
+            onClick={() => {
+              addStar({ id: session?.user?.id, thoughtId: post._id,fetchData: fetchPosts });
+            }}
           >
             <CiStar className="cursor-pointer" />
-            <p className="mx-1">{starLength}</p>
+            <p className="mx-1">{post?.star.length}</p>
           </Button>
         )}
         <Separator orientation="vertical" />
@@ -226,9 +161,13 @@ const Card = ({ post, handleDelete, fetchPosts, setSearchText }) => {
           Copy
         </Button>
         <Separator orientation="vertical" />
-        <ShareUrl link={currentUrl} />
+        <ShareUrl
+          link={`${process.env.NEXT_PUBLIC_BASE_URI}/explore/${post?._id}`}
+        />
       </div>
     </div>
+    </>
+    
   );
 };
 

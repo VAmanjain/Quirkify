@@ -5,9 +5,17 @@ export const PATCH = async (request, { params }) => {
   try {
     await connectToDB();
 
+    
+
+    console.log("ok");
     const body = await request.json();
+    
     const { thoughtId } = body;
     const userId = params.id;
+    console.log("Thought Id : ", thoughtId, "\nUser Id: ", userId);
+    
+    console.log("ok");
+
 
     if (!thoughtId) {
       // If thoughtId is empty, respond with an error
@@ -25,7 +33,7 @@ export const PATCH = async (request, { params }) => {
     );
 
     if (updatedThought) {
-      console.log("Star added successfully");
+      console.log("Star remove successfully");
       return new Response("Star is updated", { status: 200 });
     } else {
       console.log("Thought not found");
@@ -33,6 +41,6 @@ export const PATCH = async (request, { params }) => {
     } 
   } catch (error) {
     console.error(error);
-    return new Response("Failed to add Star", { status: 500 });
+    return new Response("Failed to remove Star", { status: 500 });
   }
 };
