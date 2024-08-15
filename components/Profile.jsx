@@ -8,7 +8,7 @@ import ShareUrl from "./share";
 import { Separator } from "./ui/separator";
 import { Skeleton } from "./ui/skeleton";
 
-const Profile = ({ userProfile, data, desc, handleDelete, fetchPosts }) => {
+const Profile = ({ userProfile, data, handleDelete, fetchPosts }) => {
   const { data: session } = useSession();
 
   return (
