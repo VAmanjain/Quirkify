@@ -2,6 +2,9 @@
 
 **Quirkify** is a social media platform designed to let users post their quirky thoughts without worrying about others' points of view or reactions. Built with Next.js, MongoDB Atlas, Cloudinary, and Google Authentication (via NextAuth), Quirkify offers a unique, no-judgment space to express yourself.
 
+![image](https://github.com/user-attachments/assets/3356d1a8-3666-4a76-aa35-fd905fa2fff7)
+
+
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)
